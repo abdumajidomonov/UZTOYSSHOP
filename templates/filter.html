@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Turlar{% endblock title %}
+{% block content %}
+<form method="get">
+  <div class="breadcrumb">
+    <div class="container">
+      <div class="breadcrumb-inner">
+        <ul class="list-inline list-unstyled" style="align-items: center;">
+          <li style="display: inline;"><a href="{% url "main:home" %}">Bosh sahifa</a></li>
+          <li style="display: inline;" class='active'>Turlar</li>
+          <button type="button" id="toggleButton" class="btn class-sort-respons-btn"  style="float: right;"><i class="fa-solid fa-filter"></i> Filter</button>
+        </ul>
+
+      </div>
+      <!-- /.breadcrumb-inner -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.breadcrumb -->
+  <div class="body-content outer-top-xs">
+    <div class='container'>
+
+      <div class='row'>
+        <div class='col-md-3 sidebar ' id="hiddenElement">
+          <div class="hidden-block"></div>
+          <!-- ================================== TOP NAVIGATION ================================== -->
+          <button id="filer-xmakr" class="btn class-sort-respons-btn" ><i class="fa-solid fa-xmark"></i></button>
+          <div class="side-menu animate-dropdown outer-bottom-xs">
+            <div class="head"><i class="icon fa fa-align-justify fa-fw"></i> Turkumlar</div>
+            <nav class="yamm megamenu-horizontal">
+              <ul class="nav">
+                {% for category in categories  %}
+                <li class="dropdown menu-item">      
+                    <input type="checkbox" name="category"  {% if category.name in selected_categories %}checked{% endif %} class="category-check" value="{{category.name}}">
+                    <span class="category-span h4" >{{category.name}}</span>
+                </li>
+                <!-- /.menu-item -->
+                {% endfor %}
+              </ul>
+              <!-- /.nav -->
+            </nav>
+            <!-- /.megamenu-horizontal -->
+          </div>
+          <!-- /.side-menu -->
+          <!-- ================================== TOP NAVIGATION : END ================================== -->
+          <div class="sidebar-module-container">
+            <div class="sidebar-filter">
+
+              <!-- ============================================== SIDEBAR CATEGORY : END ============================================== -->
+
+              <!-- ============================================== PRICE SILDER============================================== -->
+              <div class="sidebar-widget wow fadeInUp animated animated" style="visibility: visible; animation-name: fadeInUp;">
+                <div class="widget-header">
+                  <h4 class="widget-title">Narx, baho, so'm</h4>
+                </div>
+                <div class="sidebar-widget-body m-t-10">
+                  <div class="price-range-holder">
+                    <span class="min-max"> 
+                      <span class="pull-left" id="min-pricess">0 so'm</span> 
+                      <span class="pull-right" id="max-pricess">10,000 so'm</span> 
+                    </span>
+                    <!-- <input type="text" id="amount" style="border:0; color:#666666; font-weight:bold; text-align:center; width: 100%; margin-bottom: 10px;"> -->
+                    <div id="slider-range"></div>
+                  </div>
+                  <!-- /.price-range-holder --> 
+                  <button type="submit" class="lnk btn btn-primary">Filterlash</button> 
+                </div>
+                <input type="hidden" id="min-price-hidden" name="price-from" value="{% if selected_min_price %}{{selected_min_price}}{% else %}0{% endif %}" />
+                <input type="hidden" id="max-price-hidden" name="price-to" value="{% if selected_max_price %}{{selected_max_price}}{% else %}100000{% endif %}"/> 
+                <!-- /.sidebar-widget-body --> 
+              </div>
+              
+              <!-- ============================================== PRICE SILDER : END ============================================== -->
+              <!-- ============================================== MANUFACTURES============================================== -->
+              <div class="sidebar-widget wow fadeInUp">
+                <div class="widget-header">
+                  <h4 class="widget-title">Brendlar
+                  </h4>
+                </div>
+                <div class="sidebar-widget-body">
+                  <ul class="list">
+                    {% for brand in brands %}
+                        <li>
+                            <a href="#" class="outinputactive">
+                                <input type="checkbox" class="inputactive" 
+                                       name="brend" value="{{ brand.name }}" 
+                                       {% if brand.name in selected_brands %}checked{% endif %}>
+                                <span class="brandspan">{{ brand.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+                  <!--<a href="#" class="lnk btn btn-primary">Show Now</a>-->
+                </div>
+                <!-- /.sidebar-widget-body -->
+              </div>
+              <!-- /.sidebar-widget -->
+              <!-- ============================================== MANUFACTURES: END ============================================== -->
+              <!-- ============================================== COLOR============================================== -->
+              <div class="sidebar-widget wow fadeInUp">
+                <div class="widget-header">
+                  <h4 class="widget-title">Ranglar</h4>
+                </div>
+                <div class="sidebar-widget-body">
+                  <div class="color-content-container" >
+
+                    
+                    <ul class="list">
+                      {% for color in colors %}
+                          <li>
+                              <a href="#" class="colora">
+                                  <input type="checkbox" name="color" class="colora-input" 
+                                         value="{{ color.color_code }}" 
+                                         {% if color.color_code in selected_colors %}checked{% endif %}>
+                                  <div class="colora-bg" style="background: {{ color.color_code }};"></div>
+                                  <span class="colorname">{{ color.name }}</span>
+                              </a>
+                          </li>
+                      {% endfor %}
+                  </ul>
+                  
+                  </div><br>
+                  <a href="?" class="btn btn-primary border border-success" >Hammasini tozalash </a>
+                </div>
+                <!-- /.sidebar-widget-body -->
+              </div>
+              <!-- /.sidebar-widget -->
+              <!-- ============================================== COLOR: END ============================================== -->
+            </div>
+            <!-- ============================================== COMPARE============================================== -->
+
+            <!-- /.sidebar-widget -->
+            <!-- ============================================== COMPARE: END ============================================== -->
+
+            <!----------- Testimonials------------->
+
+            <!-- ============================================== Testimonials: END ============================================== -->
+
+
+          </div>
+          <!-- /.sidebar-filter -->
+
+          <!-- /.sidebar-module-container -->
+        </div>
+        <!-- /.sidebar -->
+        <div class='col-md-9'>
+
+          <!-- ========================================== SECTION – HERO ========================================= -->
+
+          {% if banner %}
+            <div id="category" class="category-carousel hidden-xs">
+              <div class="item">
+                <a href="{{ banner.banner_link }}">
+                    <div class="image"> <img src="{{ banner.image.url }}" style="width: 100%; height: auto;aspect-ratio: 5 / 2;object-fit: cover; "  alt="" class="img-responsive">
+                </div></a>
+                <div class="container-fluid">
+                  <div class="caption vertical-top text-left">
+                    {% comment %} <div class="big-text"> dxfcgvhjhk </div>
+                    <div class="excerpt hidden-sm hidden-md"> 49% gacha chegirma bilan tejang</div>
+                    <div class="excerpt-normal hidden-sm hidden-md"> Lorem ipsum dolor sit amet, consectetur adipiscing
+                      elit </div> {% endcomment %}
+                  </div>
+                  <!-- /.caption -->
+                </div>
+                <!-- /.container-fluid -->
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="clearfix filters-container m-t-10">
+            <div class="row">
+                <!-- Sorting section (Left side) -->
+                <div class="col col-sm-12 col-md-5 col-lg-6">
+                    <div class="col col-sm-6 col-md-12 col-lg-6 no-padding">
+                        <div class="lbl-cnt" style="width:500px"> 
+                            <span class="lbl">Avval ko’rsatiladi</span>
+                            <div class="fld inline">
+                                <div class="dropdown dropdown-small dropdown-med dropdown-white inline">
+                                  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                    {{ sorting|default:"Yangi" }} <span class="caret"></span>
+                                  </button>
+                                    <ul role="menu" class="dropdown-menu">
+                                      <li role="presentation">
+                                          <a href="?sorting=ko'p sotilgan{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}">
+                                              Ko'p sotilgan
+                                          </a>
+                                      </li>
+                                      <li role="presentation">
+                                          <a href="?sorting=arzon{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}">
+                                              Arzon
+                                          </a>
+                                      </li>
+                                      <li role="presentation">
+                                          <a href="?sorting=qimmat{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}">
+                                              Qimmat
+                                          </a>
+                                      </li>
+                                      <li role="presentation">
+                                          <a href="?sorting=yangi{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}">
+                                              Yangi
+                                          </a>
+                                      </li>
+                                  </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pagination section (Right side) -->
+                <div class="col col-sm-6 col-md-4 col-xs-6 col-lg-4 text-right" style="float:right;">
+                  <div class="pagination-container">
+                    <ul class="list-inline list-unstyled">
+                        <!-- Previous page link -->
+                        {% if products.has_previous %}
+                            <li class="prev">
+                                <a href="?page=1{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}{% if sorting %}&sorting={{ sorting }}{% endif %}{% if query %}&q={{query}}{% endif %}">
+                                    <i class="fa fa-angle-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+        
+                        <!-- Page numbers -->
+                        {% for num in products.paginator.page_range %}
+                            {% if products.number == num %}
+                                <li class="active">
+                                    <a href="#">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="?page={{ num }}{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}{% if sorting %}&sorting={{ sorting }}{% endif %}{% if query %}&q={{query}}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+        
+                        <!-- Next page link -->
+                        {% if products.has_next %}
+                            <li class="next">
+                                <a href="?page={{ products.next_page_number }}{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}{% if sorting %}&sorting={{ sorting }}{% endif %}{% if query %}&q={{query}}{% endif %}">
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                  </div>
+                </div>
+            </div>
+          </div>
+          {% if products %}
+          <div class="search-result-container ">
+            <div id="myTabContent" class="tab-content category-list">
+              <div class="tab-pane active " id="grid-container">
+                <div class="category-product">
+                  <div class="row">
+
+                    {% for product in products %}
+                    <div class="col-sm-4 col-md-4 wow fadeInUp">
+                        <div class="products">
+                          <div class="product">
+                            <div class="product-image">
+                              <div class="image"> <a href="{% url "main:product_detail" product_id=product.id %}"><img src="{{product.get_banner_image.image.url}}" style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 100%; object-fit: cover;" alt=""></a>
+                              </div>
+                              <!-- /.image -->
+                              {% if product.discount %}
+                              <div class="tag hot"><span>{{product.discount}}%</span></div>
+                              {% else %}
+                              <div class="tag new"><span>Yangi</span></div>
+                              {% endif %}
+                            </div>
+                            <!-- /.product-image -->
+    
+                            <div class="product-info text-left">
+                              <h3 class="name"><a href="{% url "main:product_detail" product_id=product.id %}">{{product.name|slice:":25"}}{% if product.name|length > 25  %}...{% endif %}</a></h3>
+                              <ul class="stars">
+                                {% for i in "12345" %}
+                                  {% if forloop.counter <= product.get_average_rating %}
+                                      <li><i class="fa-solid fa-star" style="color:gold;font-size: 13px;"></i></li> <!-- Yulduz -->
+                                  {% else %}
+                                      <li><i class="fa-solid fa-star" style="color: grey;font-size: 13px;"></i></li> <!-- Bo'sh yulduz -->
+                                  {% endif %}
+                                {% endfor %}
+                                <ul>
+                              <div class="description"></div>
+                              <div class="product-price"> <span class="price"> {{ product.get_discounted_price }} so'm </span> 
+                            {% if product.discount %}<span class="price-before-discount">{{ product.get_format_price }} so'm</span>{% endif %} </div>
+                              <!-- /.product-price -->
+                              {% for color in product.colors.all %}
+                                {% if not color.stock_quantity == 0 %}
+                                      <input type="hidden" name="color" disabled class="myCheckbox{{product.id}}" value="{{color.id}}">
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                            <!-- /.product-info -->
+                            <div class="cart clearfix animate-effect" style="width: 100%;left: 58%;">
+                              <div class="action">
+                                <ul class="list-unstyled">
+                                  <li class="add-cart-button btn-group">
+                                    <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" data-toggle="tooltip" class="btn btn-primary icon" type="button" title="savatga">
+                                      <i class="fa fa-shopping-cart"></i> </button>
+                                    <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" class="btn btn-primary cart-btn" type="button">Savatga</button>
+                                  </li>
+                                  <li class="lnk wishlist bg-primary" onclick="toggleWishlist(this);toggleFavorite({{product.id}})">
+                                    <i class="icon fa fa-heart"></i>
+                                  </li>
+    
+                                </ul>
+                              </div>
+                              <!-- /.action -->
+                            </div>
+                            <!-- /.cart -->
+                          </div>
+                            <!-- /.product -->
+                        </div>
+                        <!-- /.products -->
+                    </div>
+                    {% endfor %}
+
+
+
+
+
+
+
+                    <!-- /.item -->
+                  </div>
+                  <!-- /.row -->
+                </div>
+                <!-- /.category-product -->
+
+              </div>
+              <!-- /.tab-pane -->
+
+              <!-- /.tab-pane #list-container -->
+            </div>
+            <!-- /.tab-content -->
+            <div class="clearfix filters-container">
+              <div class="text-right">
+                  <div class="pagination-container">
+                      <ul class="list-inline list-unstyled">
+                          <!-- Previous page link -->
+                          {% if products.has_previous %}
+                              <li class="prev">
+                                  <a href="?page=1{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}{% if sorting %}&sorting={{ sorting }}{% endif %}{% if query %}&q={{query}}{% endif %}">
+                                      <i class="fa fa-angle-left"></i>
+                                  </a>
+                              </li>
+                          {% endif %}
+          
+                          <!-- Page numbers -->
+                          {% for num in products.paginator.page_range %}
+                              {% if products.number == num %}
+                                  <li class="active">
+                                      <a href="#">
+                                          {{ num }}
+                                      </a>
+                                  </li>
+                              {% else %}
+                                  <li>
+                                      <a href="?page={{ num }}{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}{% if sorting %}&sorting={{ sorting }}{% endif %}{% if query %}&q={{query}}{% endif %}">
+                                          {{ num }}
+                                      </a>
+                                  </li>
+                              {% endif %}
+                          {% endfor %}
+          
+                          <!-- Next page link -->
+                          {% if products.has_next %}
+                              <li class="next">
+                                  <a href="?page={{ products.next_page_number }}{% if selected_categories %}&category={{ selected_categories|join:',' }}{% endif %}{% if selected_min_price %}&price-from={{ selected_min_price }}{% endif %}{% if selected_max_price %}&price-to={{ selected_max_price }}{% endif %}{% if selected_colors %}&color={{ selected_colors|join:',' }}{% endif %}{% if selected_brands %}&brend={{ selected_brands|join:',' }}{% endif %}{% if sorting %}&sorting={{ sorting }}{% endif %}{% if query %}&q={{query}}{% endif %}">
+                                      <i class="fa fa-angle-right"></i>
+                                  </a>
+                              </li>
+                          {% endif %}
+                      </ul>
+                  </div>
+              </div>
+            </div>
+          
+            <!-- /.filters-container -->
+
+          </div>
+          {% else %}
+          <div class="notfounscard-content">
+            <img src="{% static "images/Product Not Found.png" %}" class="notfounscard" alt="">
+            <h3 class="h3">Mahsulot topilmadi</h3>
+            <p class="h5">
+                Afsuski, siz qidirayotgan mahsulotni topa olmadik. Iltimos, boshqa qidiruv so'zini kiriting yoki bosh sahifaga qayting.
+            </p>
+            <a href="{% url "main:home" %}" class="btn btn-primary">Bosh sahifaga qaytish</a>
+        </div>
+        
+          </div><br>
+          {% endif %}
+          <!-- /.search-result-container -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+
+      <!-- /.logo-slider -->
+      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+    </div>
+    <!-- /.container -->
+
+  </div>
+  <!-- /.body-content -->
+</form>
+{% endblock content %}
+{% block js %}
+  <script>
+    document.querySelectorAll('.color-item').forEach(item => {
+      item.addEventListener('click', function () {
+        // Tegishli checkboxni olish
+        const checkbox = this.querySelector('.color-checkbox');
+
+        // Checkbox holatini o'zgartirish
+        checkbox.checked = !checkbox.checked;
+
+        // Agar checkbox belgilangan bo'lsa, "active" klassini qo'shish yoki o'chirish
+        if (checkbox.checked) {
+          this.classList.add('active');
+        } else {
+          this.classList.remove('active');
+        }
+      });
+    });
+  </script>
+
+  <script>
+    $(function () {
+      // Initialize the slider
+      $("#slider-range").slider({
+        range: true,
+        min: 0,
+        max: {{high_price|default_if_none:"1000000"}},
+        value: [{% if selected_min_price %}{{selected_min_price}}{% else %}0{% endif %}, {% if selected_max_price %}{{selected_max_price}}{% else %}{{high_price|default_if_none:"1000000"}}{% endif %}],
+        slide: function (event, ui) {
+          $("#amount").val(ui.values[0].toLocaleString() + " so'm - " + ui.values[1].toLocaleString() + " so'm");
+        }
+      });
+  
+      // Set initial input value
+      $("#amount").val(
+        $("#slider-range").slider("values", 0).toLocaleString() +
+        " so'm - " +
+        $("#slider-range").slider("values", 1).toLocaleString() +
+        " so'm"
+      );
+    });
+  </script>
+  
+  <script>
+    const input = document.getElementById('main-input');
+    const hiddenBlock = document.getElementById('hidden-block');
+
+    // Fokus bo'lganda block ko'rinishga keladi
+    input.addEventListener('focus', () => {
+      hiddenBlock.style.display = 'block';
+    });
+
+    // Fokus yo'qolganda blokni yashirish
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        hiddenBlock.style.display = 'none';
+      }, 200);
+    });
+
+    // Blokdagi havolaga bosilganda blokni yashirmaslik
+    hiddenBlock.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+    });
+
+    // O'chirish tugmasi bosilganda havolani o'chirish
+    document.querySelectorAll('.delete').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.target.closest('a').remove();
+      });
+    });
+    
+  </script>
+  <script>
+    // Funksiyani aniqlash
+    const toggleButton = document.getElementById('toggleButton');
+    const hiddenblock = document.getElementById('filer-xmakr');
+    const hiddenElement = document.getElementById('hiddenElement');
+
+    // Tugma bosilganda ishlaydigan funksiya
+    toggleButton.addEventListener('click', function() {
+      hiddenElement.classList.toggle('show');
+    });
+    hiddenblock.addEventListener('click', function() {
+      hiddenElement.classList.toggle('show');
+    });
+  </script>
+
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const tooltipInner = document.querySelector('.tooltip-inner');
+      const minPricess = document.getElementById('min-pricess');
+      const maxPricess = document.getElementById('max-pricess');
+      const minPriceHidden = document.getElementById('min-price-hidden');
+      const maxPriceHidden = document.getElementById('max-price-hidden');
+  
+      function updatePrices() {
+          const value = tooltipInner.textContent.trim();
+          const parts = value.split(':').map(part => part.trim());
+  
+          if (parts.length === 2) {
+              const minValue = parseInt(parts[0], 10) || 0; // Butun son sifatida olish
+              const maxValue = parseInt(parts[1], 10) || 0;
+  
+              // Ko'rinadigan elementlarni yangilash
+              minPricess.textContent = `${minValue.toLocaleString('en-US')} so'm`;
+              maxPricess.textContent = `${maxValue.toLocaleString('en-US')} so'm`;
+  
+              // Yashirin inputlarni yangilash
+              minPriceHidden.value = minValue;
+              maxPriceHidden.value = maxValue;
+          } else {
+              console.warn('Tooltip qiymati noto‘g‘ri formatda!');
+          }
+      }
+  
+      // Tooltip qiymati o'zgarganda yangilanish:
+      const observer = new MutationObserver(updatePrices);
+      observer.observe(tooltipInner, { childList: true, subtree: true });
+  
+      // Dastlabki qiymatni yangilash:
+      updatePrices();
+  });
+  
+  </script>
+
+{% endblock js %}

@@ -1,0 +1,1012 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0;
+}
+
+
+.login-section {
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-content,
+.login-sms-content {
+  padding: 40px 24px;
+  width: 420px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.phonenumber,
+.login-btn {
+  padding: 8px;
+  border: 2px solid #fc8db8;
+  color: #fc8db8;
+  font-size: 16px;
+  width: 100%;
+  border-radius: 5px;
+  transition: all 0.3s linear;
+  background: transparent;
+}
+
+.phonenumber:focus {
+  box-shadow: 0 0 0 5px #fc8db8a1;
+}
+
+/* .login-btn {
+  padding: 5px;
+  border: 2px solid #fc8db8;
+  width: 100%;
+  color: #fc8db8;
+  border-radius: 5px;
+  font-size: 15px;
+  background-color: transparent;
+  transition: all 0.3s linear;
+} */
+
+.login-btn:hover {
+  background: #fc8db8;
+  color: white;
+}
+
+
+.xmark-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transform: rotate(45deg);
+  padding: 1px;
+  font-size: 25px;
+  background: transparent;
+  height: 10px;
+  color: red;
+  font-weight: bolder;
+  border: none;
+  border-radius: 50px;
+}
+
+.login-show {
+  display: flex;
+}
+
+.tag-hide {
+  display: none;
+}
+
+
+
+
+
+
+
+.mobile-navbar-section {
+  display: none;
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.mobile-navbar .item {
+  font-size: 22px;
+  position: relative;
+}
+
+.notifications {
+  width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  font-size: 10px;
+  color: white;
+  background-color: #fc8db8;
+  border-radius: 50%;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.rating-container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: start;
+  font-size: 1.7rem;
+  /* Yulduz hajmi */
+}
+
+.rating-container input[type="radio"] {
+  display: none;
+}
+
+.rating-container label {
+  cursor: pointer;
+  color: #ccc;
+  padding: 0 3px;
+  transition: color 0.3s ease;
+}
+
+.rating-container input[type="radio"]:checked~label,
+.rating-container label:hover,
+.rating-container label:hover~label {
+  color: #ff9800;
+}
+
+
+
+
+
+.color-picker-container {
+  display: flex;
+  flex-wrap: wrap;
+  /* Ranglarni qator bo'ylab joylash */
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 20px;
+
+}
+
+.color-item {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  /* Ranglarni yumaloq qilish */
+  border: 2px solid #ccc;
+  cursor: pointer;
+  margin: 3px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.color-item:hover {
+  transform: scale(1.1);
+  /* Hover effekti */
+}
+
+.color-item.active {
+  border-color: #000;
+  /* Faol rangning chegarasi qora bo'ladi */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  /* Soyani ko'rsatish */
+}
+
+.selected-color-display {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.selected-color-box {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  margin-left: 10px;
+}
+
+/* Kichik ekranlarga moslashuv */
+@media (max-width: 480px) {
+  .color-item {
+    width: 25px;
+    height: 25px;
+    /* Kichik ekranlarda rang hajmini moslashtirish */
+  }
+
+  .selected-color-box {
+    width: 25px;
+    height: 25px;
+    /* Kichik ekranlarda tanlangan rangni moslashtirish */
+  }
+
+  .selected-color-display {
+    font-size: 0.9rem;
+    /* Matnni kichikroq qilish */
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Alert xabari */
+#cart-alert {
+  display: none;
+  background-color: #fc8db8;
+  /* Orqa fon rangini belgilash */
+  color: white;
+  /* Matn rangini oq qilish */
+  padding: 20px 30px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  position: fixed;
+  /* Xabarni ekran markazida joylashtirish */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  /* Xabarni yuqoriga joylashtirish */
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  /* So'ngi effekt */
+  opacity: 0;
+  /* Boshlang'ich holat */
+  animation: showAlert 0.6s forwards, hideAlert 0.6s 2.5s forwards;
+}
+
+/* Xabarni ko'rsatish uchun animatsiya */
+@keyframes showAlert {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Xabarni yashirish uchun animatsiya */
+@keyframes hideAlert {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+/* Tugma va input maydoniga tegishli umumiy stil */
+.custom-number-input {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+  margin-right: 3%;
+  margin-left: 3%;
+}
+
+.custom-button {
+  padding: 6px 14px;
+  /* Kichraytirilgan hajm */
+  font-size: 16px;
+  /* Font o'lchamini kichraytirish */
+  cursor: pointer;
+  background-color: #ff7878;
+  /* So'ragan #ff7878 rangi */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin: 0 8px;
+  /* Tugmalar orasidagi masofa */
+}
+
+.custom-button:hover {
+  background-color: #e66b6b;
+  /* Hover effekti */
+}
+
+.custom-input {
+  width: 50px;
+  /* Kichraytirilgan input kengligi */
+  height: 35px;
+  /* Kichraytirilgan input balandligi */
+  font-size: 16px;
+  /* Font o'lchamini kichraytirish */
+  text-align: center;
+  border: 2px solid #ff7878;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Inputga fokus bo'lganda spinner yoki boshqa belgilarni olib tashlash */
+.custom-input[type="number"]::-webkit-outer-spin-button,
+.custom-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-input[type="number"] {
+  -moz-appearance: textfield;
+  /* Firefoxda spinnerni olib tashlash */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Profil header styling */
+.profile-header-container {
+  background: #fc8db8;
+  color: white;
+  border-radius: 0 0 20px 20px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.25rem !important;
+  /* Font size added */
+}
+
+/* Profile image */
+.profile-avatar-image {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  /* Avatar bilan boshqa elementlar orasidagi masofani qisqartirdik */
+}
+
+/* H5 va p elementlarining uslubi */
+
+
+/* Menu container */
+.menu-container {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  font-family: Arial, sans-serif;
+}
+
+/* Menu item styling */
+.menu-item-container {
+  font-size: 1rem !important;
+  /* Font size added */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Hover and active state for menu items */
+.menu-item-container:hover,
+.menu-item-container.active {
+  background-color: #f8bbd0;
+  font-weight: bold;
+  border-left: 3px solid #fc8db8;
+  cursor: pointer;
+  color: #000;
+}
+
+/* Custom styling for email item */
+.email-menu-item-container {
+  font-size: 1rem !important;
+  /* Font size added */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+
+
+
+
+
+
+
+/* Buyurtma kartasi */
+.order-page-order-card {
+  background-color: #fc8db8;
+  border-radius: 8px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-page-order-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.order-page-order-details {
+  margin-top: 10px;
+}
+
+.order-page-product-card {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.order-page-product-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.order-page-product-info {
+  margin-left: 15px;
+  color: #333;
+}
+
+.order-page-order-status {
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 5px 15px;
+  border-radius: 5px;
+  display: inline-block;
+  width: auto;
+}
+
+.order-page-order-status.pending {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.order-page-order-status.preparing {
+  background-color: #f39c12;
+  color: white;
+}
+
+.order-page-order-status.on-the-way {
+  background-color: #3498db;
+  color: white;
+}
+
+.order-page-order-status.ready {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.order-page-product-info p {
+  margin-bottom: 5px;
+}
+
+.order-page-product-info strong {
+  color: #555;
+}
+
+.order-page-collapse .order-page-product-card {
+  margin-top: 10px;
+}
+
+/* Mahsulotni ko'rish uchun btn-light */
+.order-page-btn-light {
+  background-color: #fff;
+  color: #fc8db8;
+  border: 2px solid #fc8db8;
+  padding: 8px 16px;
+  /* Kichikroq padding */
+  border-radius: 10px;
+  /* Yuvarlatilgan burchaklar */
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  /* O'rtacha o'lchamdagi shrift */
+  transition: all 0.3s ease;
+  /* Yumoq animatsiya */
+}
+
+.order-page-btn-light:hover {
+  background-color: #fc8db8;
+  color: white;
+  border: 2px solid white;
+}
+
+
+
+
+
+.our-society {
+  display: flex;
+}
+
+.our-society li {
+  margin: 5px;
+  font-size: 35px;
+}
+
+.our-society .telegram-icon {
+  color: rgb(0, 81, 255);
+}
+
+.our-society .instagram-icon {
+  color: rgb(255, 0, 183);
+}
+
+.our-society .youtube-icon {
+  color: rgb(255, 0, 0);
+}
+
+.our-society .facebook-icon {
+  color: rgb(0, 0, 255);
+}
+
+
+.color-checkbox {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: none;
+}
+
+.checkout-h3 {
+  font-size: 20px;
+  margin: auto;
+}
+
+.checkout-p {
+  font-size: 16px;
+}
+
+#districts {
+  width: 250px;
+}
+
+
+.user-data-inputs {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.user-data-inputs li {
+  width: 45%;
+  margin-top: 5%;
+}
+
+.user-data-inputs .userdata-input {
+  padding: 20px;
+}
+
+.inp-name {
+  font-size: 14px;
+}
+
+.inp-name span {
+  color: red;
+}
+
+
+
+
+
+.social-responsivess {
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Modalni yashirish */
+.checkout-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+/* Modalning ichki qismi */
+.checkout-modal-content {
+  position: relative;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 1000px;
+  text-align: center;
+  /* line-height: ; */
+}
+
+/* Yopish belgisi (X) */
+.checkout-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.checkout-close-btn:hover {
+  color: #ff5e5e;
+}
+
+.checkout-open-btn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.checkout-open-btn:hover {
+  background-color: #0056b3;
+}
+
+
+.tolov-icon {
+  width: 80px;
+
+}
+
+.tolov-usuli {
+  margin-right: 3px !important;
+}
+
+.chekout-a,
+.chekout-a:hover {
+  font-size: 18px !important;
+  align-items: center;
+  color: #000;
+}
+
+.seeallproduct-dn {
+  display: none;
+}
+
+.ikkicheka {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.owl-controls {
+  display: none !important;
+}
+
+#brand-slider p {
+  color: #000;
+}
+
+.search-history {
+  position: absolute;
+  z-index: 999;
+  width: 100%;
+  display: none;
+  background: white;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+
+.search-history-a {
+  display: flex;
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.search-history-a:hover {
+  color: #000;
+}
+
+.search-field:focus+.search-history {
+  display: block;
+}
+
+.search-history-a a {
+  width: 100%;
+}
+
+
+.class-sort-respons-btn {
+  display: none;
+}
+
+.show {
+  display: block;
+  position: fixed;
+  top: 0px;
+  padding: 15px;
+  left: 0;
+  overflow: scroll;
+  height: 100%;
+  z-index: 999;
+  background: white;
+}
+
+.hidden-block {
+  display: flex;
+  position: fixed;
+  top: 0;
+  z-index: -100;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+}
+
+.wishlistactive {
+  background: #fc8db8;
+}
+
+.notfounscard {
+  width: 500px;
+  margin: auto;
+}
+
+.notfounscard-content {
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+}
+
+
+#filer-xmakr {
+  position: fixed;
+  top: 10px;
+  left: 240px;
+  padding: 5px 10px;
+  color: white;
+  font-size: 15px;
+  background: red;
+  border: none;
+  z-index: 10;
+  outline: none;
+  border-radius: 50%;
+
+}
+
+.outinputactive {
+  position: relative;
+}
+
+.inputactive,
+.category-check,
+.colora-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.brandspan {
+  padding: 3px 10px;
+  color: #000;
+  display: inline-block;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.inputactive:checked+.brandspan {
+  color: #000;
+  background: #c0c0c0;
+}
+
+.inputactive:hover+.brandspan {
+  background: #c0c0c091;
+}
+
+.category-span {
+  padding: 5px 10px;
+  display: block;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.category-check:checked+.category-span,
+.category-check:hover+.category-span {
+  background: #57c5ce;
+}
+
+
+
+/* 
+
+.all-orders {
+  display: flex;
+  width: 100%;
+
+}
+
+.order {
+  width: 320px;
+  justify-content: space-between;
+  border-radius: 10px;
+  padding: 1px;
+  border: 1px solid rgb(133, 133, 133);
+}
+
+.order div {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.order span {
+  float: right;
+  font-weight: 500;
+}
+
+.status-span {
+  background: rgb(34, 199, 34);
+  color: white;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+.order .order-id {
+font-size: 20px;
+} */
+
+
+
+
+
+
+
+
+
+
+
+.lnk.wishlist.bg-primary {
+  background-color: #428bca;
+  /* boshlang'ich rang */
+  cursor: pointer;
+}
+
+.select,
+.lnk.wishlist.bg-primary:hover {
+  background-color: #fc8db8 !important;
+  /* faollashtirilgan rang */
+}
+
+.colora,
+.colora:hover {
+  position: relative;
+  display: flex !important;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #000 !important;
+  width: fit-content;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.colora:has(input:checked),
+.colora:hover {
+  background: #c0c0c091;
+
+}
+
+.colora:has(input:checked) .colora-bg ,.colora:hover .colora-bg {
+  border: 3px solid black;
+}
+
+.colora-bg {
+  width: 30px;
+  border-radius: 50%;
+  height: 30px;
+  margin-right: 5px;
+  border: 3px solid #d1d1d191;
+  background: #000;
+}
+
+
+
+
+.bestnotifications {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  top: -10px;
+  right: 0;
+  font-size: 14px;
+  padding: 2px;
+  border-radius: 50%;
+  background: #428bca;
+  color: white !important;
+}
+
+
+.resposnsivebr {
+display: none;
+}

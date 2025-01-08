@@ -1,0 +1,564 @@
+{% extends "base.html" %}
+{% load static %}
+{% block css %}
+  <style>
+    #modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 400px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    #modal input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #modal select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #modal button {
+      padding: 10px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #modal button:hover {
+      background: #0056b3;
+    }
+
+    #user-avatar {
+      margin-top: 20px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #007BFF;
+    }
+
+
+
+    #closeModal1 {
+      padding: 10px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-end;
+    }
+
+    #closeModal1:hover {
+      background: #c82333;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 999;
+      backdrop-filter: blur(5px);
+    }
+
+
+
+
+
+
+
+
+        /* Modalni yashirish va ko'rsatish uchun */
+        #socialMediaModalWrapperModern {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: none;
+          justify-content: center;
+          align-items: flex-end;
+          padding: 15px;
+          z-index: 9999;
+          background: rgba(0, 0, 0, 0.4); /* Orqa fonni qoraytirish */
+          backdrop-filter: blur(8px); /* Orqa fonni blur qilish */
+        }
+    
+        .socialMediaModalModern {
+          background-color: #fff;
+          border-radius: 12px 12px 0 0;
+          width: 100%;
+          max-width: 500px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          padding: 25px;
+          transition: transform 0.3s ease-in-out;
+          position: absolute;
+          bottom: -100%;
+          z-index: 10000;
+        }
+    
+        .socialMediaModalTitleModern {
+
+          font-size: 18px;
+          font-weight: 600;
+          text-align: center ;
+          margin-bottom: 20px;
+          color: #333;
+        }
+    
+        .socialMediaLinksWrapperModern {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          animation: fadeInUp 0.5s ease-out;
+        }
+    
+        .socialMediaLinkModern {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 60px;
+          height: 60px;
+          background-color: #fff;
+          border-radius: 20px;
+          text-decoration: none;
+          font-size: 40px;
+          color: #fff;
+          transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+    
+        .socialMediaLinkModern:hover {
+          opacity: 0.8;
+          transform: scale(1.1);
+          color: white;
+        }
+    
+        .instagramLinkModern {
+          background-color: #E1306C;
+        }
+    
+        .telegramLinkModern {
+          background-color: #0088cc;
+        }
+    
+        .facebookLinkModern {
+          background-color: #3b5998;
+        }
+    
+        .emailLinkModern {
+          background-color: #d14836;
+        }
+    
+        .phoneLinkModern {
+          background-color: #4CAF50;
+        }
+    
+        .closeSocialMediaModalButtonModern {
+          text-align: center;
+          margin-top: 20px;
+          cursor: pointer;
+          color: #007bff;
+          font-size: 16px;
+          transition: color 0.3s ease;
+        }
+    
+        .closeSocialMediaModalButtonModern:hover {
+          color: #0056b3;
+        }
+    
+        @media (max-width: 600px) {
+          .socialMediaModalModern {
+            max-width: 100%;
+          }
+    
+          .socialMediaLinkModern {
+            width: 45px;
+            height: 45px;
+            border-radius: 15px;
+            font-size: 30px;
+          }
+          #user-avatar {
+            margin-top: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #007BFF;
+          }
+        }
+    
+        /* Animatsiya */
+        @keyframes fadeInUp {
+          0% {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        /* Modal konteyneri */
+        .lokatsiya-modal {
+          display: none; /* Boshlang'ichda yashirin */
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 100%; /* To'liq ekranni qamrab oladi */
+          background-color: rgba(0, 0, 0, 0.5); /* Yarim shaffof fon */
+          z-index: 1000;
+        }
+    
+        /* Modalning asosiy qismi */
+        .lokatsiya-modal-content {
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+          max-width: 100%;
+          background-color: white;
+          border-top-left-radius: 12px;
+          border-top-right-radius: 12px;
+          padding: 20px;
+          box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+          animation: slideUp 0.3s ease-out;
+        }
+    
+        /* Modalning yopish tugmasi */
+        .lokatsiya-yopish-btn {
+          color: #aaa;
+          font-size: 24px;
+          font-weight: bold;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          cursor: pointer;
+        }
+    
+        .lokatsiya-yopish-btn:hover,
+        .lokatsiya-yopish-btn:focus {
+          color: black;
+          text-decoration: none;
+        }
+    
+        /* Google Maps responsivligi */
+        .lokatsiya-xarita {
+          width: 100%;
+          height: 350px;
+          border: none;
+          border-radius: 8px;
+        }
+    
+        /* Ochish tugmasi */
+        .lokatsiya-ochish-btn {
+          padding: 10px 20px;
+          background-color: #28a745;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+    
+        .lokatsiya-ochish-btn:hover {
+          background-color: #218838;
+        }
+    
+        /* Modal animatsiyasi */
+        @keyframes slideUp {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+
+        .newnotifications {
+          height: fit-content;
+          padding:  4px 10px;
+          font-size: 14px;
+          color: white;
+          background-color: #fc8db8;
+          border-radius: 50%;
+
+        }
+  </style>
+{% endblock css %}
+{% block content %}
+
+
+  <!-- Profil Header -->
+  <div class="profile-header-container">
+    <!-- Avatar image -->
+    <h5 class="h3 " style="opacity: 0.9;margin: 0 !important;">Shaxsiy kabinet</h5>
+
+    <div class="user-infoee"><img id="user-avatar" src="{% if request.user.gender == "female" %}{% static "images/userfemaleavatar.png" %}{% else %}{% static "images/usermaleavatar.png" %}{% endif %}" alt="User Avatar" class="profile-avatar-image">
+    <div>
+      <h5 class=" h4">{{request.user.first_name}} {{request.user.last_name}} </h5>
+      <p class=" h5">{{request.user.get_format_phone}}</p>
+    </div>
+  </div>
+  </div>
+
+  <!-- Haridor ma'lumotlari -->
+  <div class="container">
+    <!-- Menu bo'limlari -->
+    <ul class="menu-container">
+      <!-- Email item -->
+      {% if request.user.email %}
+      <div style="cursor: default;" class="email-menu-item-container active">
+
+        <span class="h4"><i class="bi bi-envelope"></i> {{request.user.email}}</span>
+      </div>
+      {% endif %}
+      <!-- Buyurtmalarim item -->
+      <a href="{% url "main:my-orders" %}" style="position: relative;" id="menu-orders" class="menu-item-container">
+        <span class="h4" ><i class="bi bi-bag-check"></i> Buyurtmalarim </span>
+        
+        <span style="display: flex; align-items: center;">
+          {% if order_count %}
+          <span class="newnotifications">{{order_count}}</span>
+          {% endif %}
+          <i class="bi bi-chevron-right ms-auto h4 "></i>
+        </span>
+      </a>
+
+      <!-- Sozlamalar item -->
+      <div id="openModal" id="menu-settings" class="menu-item-container">
+        <span class="h4"><i class="bi bi-gear"></i> Sozlamalar</span>
+        <i class="bi bi-chevron-right ms-auto h4"></i>
+      </div>
+    </ul>
+    <br>
+    <ul class="menu-container">
+      <!-- Buyurtmalarim item -->
+      <a href="{% url "main:contact" %}" id="menu-orders" class="menu-item-container" style="border-top: 1px solid #ddd;">
+        <span class="h4"><i class="bi bi-phone"></i> Biz bilan bo'g'lanish </span>
+        <i class="bi bi-chevron-right ms-auto h4 "></i>
+      </a>
+      <a href="#" id="menu-orders" class="menu-item-container">
+        <span class="h4"><i class="bi bi-filetype-doc"></i>  Biz haqimizda </span>
+        <i class="bi bi-chevron-right ms-auto h4 "></i>
+      </a>
+      <div onclick="ochLokatsiyaModal()" id="menu-orders" class="menu-item-container" >
+        <span class="h4" ><i class="bi bi-geo-alt"></i> Biz Joylashuvimiz</span>
+        <i class="bi bi-chevron-right ms-auto h4 "></i>
+      </div>
+      <div id="menu-orders" onclick="openSocialMediaModal()"  class="social-responsivess menu-item-container " >
+        <span class="h4">@ Bizni ijtimoiy tarmoqlar</span>
+        <i class="bi bi-chevron-right ms-auto h4 "></i>
+      </div>
+
+
+
+
+    </ul>
+    <br>
+    <a href="{% url "account:logout" %}"><div class="btn btn-primary" style="width: 200px; margin: auto;display: block;"> Chiqish </div></a>
+  </div>
+  <div id="overlay"></div>
+  <form id="modal" action="{% url "account:profile" %}" method="post">
+    {% csrf_token %}
+    <button type="button" id="closeModal1" style="background-color: red;padding: 5px 10px;border-radius: 50%;">X</button>
+    <label for="firstName">Ismi:</label>
+    <input type="text" name="first_name" value="{% if user.first_name %}{{ user.first_name }}{% endif %}" id="firstName" placeholder="Ismingizni kiriting">
+
+    <label for="lastName">Familiyasi:</label>
+    <input type="text" name="last_name" value="{% if user.last_name %}{{ user.last_name }}{% endif %}" id="lastName" placeholder="Familiyangizni kiriting">
+    <label for="address">Manzil:</label>
+    <input type="text" id="address" name="address" value="{% if user.address %}{{user.address}}{% endif %}"  placeholder="Manzillingizni kiriting">
+    <label for="email">Email:</label>
+    <input type="email" name="email" value="{% if user.email %}{{user.email}}{% endif %}" id="email" placeholder="Emailni kiriting">
+    <label for="gender">Jinsi:</label>
+    {% if user.gender == "female" %}
+    <select name="gender" id="gender">
+      <option value="male" >Erkak</option>
+      <option value="female" select>Ayol</option>
+    </select>
+    {% else %}
+    <select name="gender" id="gender">
+      <option value="male" select>Erkak</option>
+      <option value="female">Ayol</option>
+    </select>
+    {% endif %}
+   
+
+    <button type="submit" id="save">Saqlash</button>
+  </form>
+
+
+  <!-- Pastga yopishib chiqadigan modal -->
+  <div id="socialMediaModalWrapperModern" onclick="closeSocialMediaModal(event)">
+    <div class="socialMediaModalModern" onclick="event.stopPropagation()">
+      <div style="background-color: red;padding: 4px 10px;border-radius: 50%;width: min-content;color: white;font-size: 20px;position: absolute;top: 10px;right: 10px;"  onclick="closeSocialMediaModal()"><i class="fa-solid fa-xmark"></i></div>
+      <h3 class="socialMediaModalTitleModern" style="margin-bottom: 0;"> Uztoysshop <br> Ijtimoiy Tarmoqlari </h3><br>
+      <div class="socialMediaLinksWrapperModern">
+        <a href="https://www.instagram.com/uztoysshop" class="socialMediaLinkModern instagramLinkModern" style="background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af); " target="_blank">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://telegram.me" class="socialMediaLinkModern telegramLinkModern" target="_blank">
+          <i class="fab fa-telegram-plane"></i>
+        </a>
+        <a href="https://www.facebook.com/uztoysshop" class="socialMediaLinkModern facebookLinkModern" target="_blank">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://youtube.com/@uztoysshop?si=SCB_WeFc16nkJbAw" class="socialMediaLinkModern " style="background-color: red;">
+          <i class="fab fa-youtube"></i>
+        </a>
+
+        <a href="tel:+998900000000" class="socialMediaLinkModern phoneLinkModern">
+          <i class="fas fa-phone"></i>
+        </a>
+      </div>
+      <div class="closeSocialMediaModalButtonModern" onclick="closeSocialMediaModal()">Yopish</div>
+    </div>
+  </div>
+
+
+
+    <!-- Modal konteyneri -->
+    <div id="lokatsiyaModal" class="lokatsiya-modal" onclick="orqaFonniYop(event)">
+      <!-- Modal kontenti -->
+      <div class="lokatsiya-modal-content">
+        <span class="lokatsiya-yopish-btn" onclick="yopLokatsiyaModal()">&times;</span>
+        <h2 class="h3">Bizning Joylashuv</h2>
+        <!-- Google Maps iframe -->
+        <iframe 
+            class="lokatsiya-xarita"
+            src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d4961.167218324755!2d72.355654!3d40.82451!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNDDCsDQ5JzI4LjIiTiA3MsKwMjEnMjAuNCJF!5e1!3m2!1sru!2s!4v1735807327944!5m2!1sru!2s"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+
+      </div>
+    </div>
+{% endblock content %}
+{% block js %}
+  <script>
+    const openModal = document.getElementById('openModal');
+    const modal = document.getElementById('modal');
+    const saveButton = document.getElementById('save');
+    const genderSelect = document.getElementById('gender');
+    const userAvatar = document.getElementById('user-avatar');
+    const closeModal = document.getElementById('closeModal1');
+    const overlay = document.getElementById('overlay');
+
+    // Show modal
+    openModal.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      overlay.style.display = 'block';
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', () => {
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+    });
+
+    overlay.addEventListener('click', () => {
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+    });
+
+    // Save data and update avatar
+    saveButton.addEventListener('click', () => {
+      const gender = genderSelect.value;
+      if (gender === 'male') {
+        userAvatar.src = '{% static "images/usermaleavatar.png" %}';
+      } else {
+        userAvatar.src = '{% static "images/userfemaleavatar.png" %}';
+      }
+
+      // Save to cookies
+      document.cookie = `gender=${gender}; path=/; max-age=${60 * 60 * 24 * 7}`; // Cookie saqlash 7 kun
+
+      // Close modal
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+    });
+
+    // Load data on page load
+    window.addEventListener('load', () => {
+      const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+        const [key, value] = cookie.split('=');
+        acc[key] = value;
+        return acc;
+      }, {});
+
+      const savedGender = cookies.gender;
+      if (savedGender) {
+        genderSelect.value = savedGender;
+        userAvatar.src = savedGender === 'male'
+          ? '{% static "images/usermaleavatar.png" %}'
+          : '{% static "images/userfemaleavatar.png" %}';
+      }
+    });
+
+    
+  </script>
+  <script>
+    // Modalni ochish
+    function openSocialMediaModal() {
+      const modal = document.getElementById('socialMediaModalWrapperModern');
+      const modalContent = modal.querySelector('.socialMediaModalModern');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modalContent.style.bottom = '0';
+      }, 50);
+    }
+
+    // Modalni yopish
+    function closeSocialMediaModal(event) {
+      const modal = document.getElementById('socialMediaModalWrapperModern');
+      const modalContent = modal.querySelector('.socialMediaModalModern');
+      modalContent.style.bottom= '0';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+  </script>
+  
+  <script>
+    // Modalni ochish
+    function ochLokatsiyaModal() {
+      document.getElementById('lokatsiyaModal').style.display = 'block';
+    }
+
+    // Modalni yopish
+    function yopLokatsiyaModal() {
+      document.getElementById('lokatsiyaModal').style.display = 'none';
+    }
+
+    // Orqa fonni bosilganda modalni yopish
+    function orqaFonniYop(event) {
+      if (event.target.id === 'lokatsiyaModal') {
+        yopLokatsiyaModal();
+      }
+    }
+  </script>
+{% endblock js %}

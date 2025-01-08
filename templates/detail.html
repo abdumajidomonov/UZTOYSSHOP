@@ -1,0 +1,568 @@
+{% extends "base.html" %}
+{% block title %}{{product.name}}{% endblock title %}
+{% block css %}
+<style>
+	.color-item.active {
+		border: 2px solid black;
+		/* Faollashgan element borderni qora qiladi */
+	}
+	#out-of-stock {
+		position: relative;  /* Pseudo-elementni ishlatish uchun */
+		border: 2px solid red;
+	}
+
+	#out-of-stock::after {
+		content: "";  /* Pseudo-element uchun kontent */
+		position: absolute;
+		top: 50%;  /* Yengil markirovka */
+		left: 0;
+		width: 100%;
+		height: 2px;  /* Chiziq balandligi */
+		background-color: red;  /* Chiziq rangini o'rnating */
+		transform: translateY(-50%) rotate(-45deg);  /* Chiziqni o'rtaga joylashtirish */
+	}
+	#out-of-stock-red {
+		position: relative;  /* Pseudo-elementni ishlatish uchun */
+		border: 2px solid black !important;
+	}
+	#out-of-stock-red::after {
+		content: "";  /* Pseudo-element uchun kontent */
+		position: absolute;
+		top: 50%;  /* Yengil markirovka */
+		left: 0;
+		width: 100%;
+		height: 2px;  /* Chiziq balandligi */
+		background-color: black;  /* Chiziq rangini o'rnating */
+		transform: translateY(-50%) rotate(-45deg);  /* Chiziqni o'rtaga joylashtirish */
+	}
+</style>
+{% endblock css %}
+{% block content %}
+
+	<div class="breadcrumb">
+		<div class="container">
+			<div class="breadcrumb-inner">
+				<ul class="list-inline list-unstyled">
+					{% for category in product.category.all %}
+					<li style="display:inline;"><a href="{% url "main:product_list" %}?category={{category.name}}">{{category.name}}</a></li>
+                    {% endfor %}
+				</ul>
+			</div><!-- /.breadcrumb-inner -->
+		</div><!-- /.container -->
+	</div><!-- /.breadcrumb -->
+	<div class="body-content outer-top-xs">
+		<div class='container'>
+			<div class='row single-product'>
+				<!-- /.sidebar -->
+				<div class='col-md-12'>
+					<div class="detail-block">
+						<div class="row  wow fadeInUp">
+
+							<div class="col-xs-12 col-sm-6 col-md-5 gallery-holder">
+								<div class="product-item-holder size-big single-product-gallery small-gallery">
+
+									<div id="owl-single-product">
+										{% for image in product.get_product_images %}
+
+										<div class="single-product-gallery-item" id="slide{{forloop.counter}}">
+											<a data-lightbox="image-{{forloop.counter}}" data-title="Gallery"
+												href="#">
+												<img class="img-responsive" alt="" src="{{image.image.url}}"
+													data-echo="{{image.image.url}}" />
+											</a>
+										</div><!-- /.single-product-gallery-item -->
+										{% endfor %}
+									</div><!-- /.single-product-slider -->
+
+
+									<div class="single-product-gallery-thumbs gallery-thumbs">
+
+										<div id="owl-single-product-thumbnails">
+											{% for image in product.get_product_images %}
+												<div class="item">
+													<a class="horizontal-thumb {% if forloop.counter == 1 %}active{% endif %}" data-target="#owl-single-product"
+														data-slide="{{forloop.counter}}" href="#slide{{forloop.counter}}">
+														<img class="img-responsive" width="85" alt=""
+															src="{{image.image.url}}"
+															data-echo="{{image.image.url}}" />
+													</a>
+												</div>
+											{% endfor %}
+										</div><!-- /#owl-single-product-thumbnails -->
+
+
+
+									</div><!-- /.gallery-thumbs -->
+
+								</div><!-- /.single-product-gallery -->
+							</div><!-- /.gallery-holder -->
+							<div class='col-sm-6 col-md-7 product-info-block'>
+								<div class="product-info">
+									<h1 class="name">{{product.name}}</h1>
+
+									<div class="rating-reviews m-t-20">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<div class="rating-container">
+													{% for star in rating_list %}
+														<input 
+															type="radio" 
+															id="rate-{{ forloop.counter }}" 
+															name="custom-rating" 
+															value="{{ forloop.counter }}" 
+															{% if star == user_rating %} checked {% endif %}>
+														<label for="rate-{{ forloop.counter }}" onclick="rateProduct({{product.id}}, {{star}})">★</label>
+													{% endfor %}
+												</div>
+											</div>
+											<div class="col-sm-8 col-xs-8">
+												<div class="reviews">
+													<a href="#" class="lnk">({{product.ratings.count}} Sharxlar)</a>
+												</div>
+											</div>
+										</div><!-- /.row -->
+									</div><!-- /.rating-reviews -->
+
+									<div class="stock-container info-container m-t-10">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<div class="stock-box">
+													<span class="label">Hozirda:</span>
+												</div>
+											</div>
+											<div class="col-sm-8 col-xs-8">
+												<div class="stock-box">
+													<span class="value">{{product.get_product_quantity}} dona mavjud</span>
+												</div>
+											</div>
+										</div><!-- /.row -->
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<div class="stock-box">
+													<span class="label">Turkumlar:</span>
+												</div>
+											</div>
+											<div class="col-sm-8 col-xs-8">
+												<div class="stock-box">
+													<span class="value">{% for category in product.category.all %}
+														{{category.name}},
+														{% endfor %}</span>
+												</div>
+											</div>
+										</div><!-- /.row -->
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<div class="stock-box">
+													<span class="label">Brend:</span>
+												</div>
+											</div>
+											<div class="col-sm-8 col-xs-8">
+												<div class="stock-box">
+													<span class="value">{{product.brend.name}}</span>
+												</div>
+											</div>
+										</div><!-- /.row -->
+									</div><!-- /.stock-container -->
+
+									<div class="price-container info-container m-t-20">
+										<div class="row">
+
+
+											<div class="col-xs-12 col-sm-12 col-md-6">
+												<div class="price-box">
+													<span class="price">{{product.get_discounted_price}} so'm</span>
+													<span class="price-strike">{{ product.get_format_price }}</span>
+												</div>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-6">
+												<div class="color-picker-container">
+													<!-- Rang elementlari -->
+													{% for color in product.colors.all %}
+													<div class="color-item" {% if not color.stock_quantity %}style="pointer-events: none !important;background-color: {{color.color.color_code}};" id="{% if color.color.color_code == "red" %}out-of-stock-red{% else %}out-of-stock{% endif %}" {% endif %} style="background-color: {{color.color.color_code}};"
+														data-color="{{color.color.color_code}}" data-id="{{color.id}}" title="{{color.color.name}}"></div>
+                            						{% endfor %}
+													
+													<input name="color" id="selectedColorId" type="hidden">
+												</div>
+
+												<!-- <div class="selected-color-display">
+											Selected Color:
+											<span class="selected-color-box" id="selected-color-box"></span>
+										  </div> -->
+												<input type="hidden" id="selected-color" value="" readonly required />
+											</div>
+
+											<div class="col-xs-12 col-sm-12 col-md-6">
+												<div class="favorite-button">
+													<button class="btn btn-primary {% if is_favorite %}select{% endif %}" onclick="this.classList.toggle('select');toggleFavorite({{product.id}})" style="outline: none;border: none;"  type="button" title="Wishlist" >
+														<i class="fa fa-heart"></i>
+													</button>
+
+												</div>
+											</div>
+
+										</div><!-- /.row -->
+									</div><!-- /.price-container -->
+
+									<div class="quantity-container info-container">
+										<div class="row ">
+
+
+
+											<div class="col-xs-5 col-sm-5">
+												<div class="cart-quantity">
+													<div class="custom-number-input">
+														<button class="custom-button decrease">-</button>
+														<input id="numberInput" class="custom-input" type="number"
+															value="1" min="1">
+														<button class="custom-button increase">+</button>
+													</div>
+												</div>
+											</div>
+
+											<div class="col-xs-7 col-sm-7">
+												<button class="btn  btn-primary smallit" id="confirmSelection"
+													onclick="addToCart({{product.id}})"><i
+														class="fa fa-shopping-cart inner-right-vs"></i>
+													Savatga+</button>
+											</div>
+
+
+										</div><!-- /.row -->
+									</div><!-- /.quantity-container -->
+
+
+
+
+
+
+								</div><!-- /.product-info -->
+							</div><!-- /.col-sm-7 -->
+						</div><!-- /.row -->
+					</div>
+
+					<div class="product-tabs inner-bottom-xs  wow fadeInUp" style="width: fit-content;">
+						<ul id="product-tabs" class="nav nav-tabs nav-tab-cell">
+							<li class="" onclick="descShow()" style="width: fit-content;"><a data-toggle="tab"
+									href="#description">Description</a></li>
+							<!-- <li><a data-toggle="tab" href="#review">Review</a></li>
+						<li><a data-toggle="tab" href="#tags">Tags</a></li> -->
+						</ul>
+						<div class="row">
+							<!-- <div class="col-sm-3">
+							</div> -->
+							<div class="col-sm-12">
+
+								<div class="tab-content">
+
+									<div id="description" class="tab-pane in ">
+										<div class="product-tab">
+											<p class="text">
+												{{product.description|safe}}
+
+											</p>
+										</div>
+									</div><!-- /.tab-pane -->
+
+									<div id="review" class="tab-pane">
+										<div class="product-tab">
+
+											<div class="product-reviews">
+												<h4 class="title">Customer Reviews</h4>
+
+												<div class="reviews">
+													<div class="review">
+														<div class="review-title"><span class="summary">We love this
+																product</span><span class="date"><i
+																	class="fa fa-calendar"></i><span>1 days
+																	ago</span></span></div>
+														<div class="text">"Lorem ipsum dolor sit amet, consectetur
+															adipiscing elit.Aliquam suscipit."</div>
+													</div>
+
+												</div><!-- /.reviews -->
+											</div><!-- /.product-reviews -->
+
+
+
+											<div class="product-add-review">
+												<h4 class="title">Write your own review</h4>
+												<div class="review-table">
+													<div class="table-responsive">
+														<table class="table">
+															<thead>
+																<tr>
+																	<th class="cell-label">&nbsp;</th>
+																	<th>1 star</th>
+																	<th>2 stars</th>
+																	<th>3 stars</th>
+																	<th>4 stars</th>
+																	<th>5 stars</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td class="cell-label">Quality</td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="1"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="2"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="3"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="4"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="5"></td>
+																</tr>
+																<tr>
+																	<td class="cell-label">Price</td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="1"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="2"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="3"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="4"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="5"></td>
+																</tr>
+																<tr>
+																	<td class="cell-label">Value</td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="1"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="2"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="3"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="4"></td>
+																	<td><input type="radio" name="quality" class="radio"
+																			value="5"></td>
+																</tr>
+															</tbody>
+														</table><!-- /.table .table-bordered -->
+													</div><!-- /.table-responsive -->
+												</div><!-- /.review-table -->
+
+												<div class="review-form">
+													<div class="form-container">
+														<form role="form" class="cnt-form">
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="exampleInputName">Your Name <span
+																				class="astk">*</span></label>
+																		<input type="text" class="form-control txt"
+																			id="exampleInputName" placeholder="">
+																	</div><!-- /.form-group -->
+																	<div class="form-group">
+																		<label for="exampleInputSummary">Summary <span
+																				class="astk">*</span></label>
+																		<input type="text" class="form-control txt"
+																			id="exampleInputSummary" placeholder="">
+																	</div><!-- /.form-group -->
+																</div>
+
+																<div class="col-md-6">
+																	<div class="form-group">
+																		<label for="exampleInputReview">Review <span
+																				class="astk">*</span></label>
+																		<textarea class="form-control txt txt-review"
+																			id="exampleInputReview" rows="4"
+																			placeholder=""></textarea>
+																	</div><!-- /.form-group -->
+																</div>
+															</div><!-- /.row -->
+
+															<div class="action text-right">
+																<button class="btn btn-primary btn-upper">SUBMIT
+																	REVIEW</button>
+															</div><!-- /.action -->
+
+														</form><!-- /.cnt-form -->
+													</div><!-- /.form-container -->
+												</div><!-- /.review-form -->
+
+											</div><!-- /.product-add-review -->
+
+										</div><!-- /.product-tab -->
+									</div><!-- /.tab-pane -->
+
+									<div id="tags" class="tab-pane">
+										<div class="product-tag">
+
+											<h4 class="title">Product Tags</h4>
+											<form role="form" class="form-inline form-cnt">
+												<div class="form-container">
+
+													<div class="form-group">
+														<label for="exampleInputTag">Add Your Tags: </label>
+														<input type="email" id="exampleInputTag"
+															class="form-control txt">
+
+
+													</div>
+
+													<button class="btn btn-upper btn-primary" type="submit">ADD
+														TAGS</button>
+												</div><!-- /.form-container -->
+											</form><!-- /.form-cnt -->
+
+											<form role="form" class="form-inline form-cnt">
+												<div class="form-group">
+													<label>&nbsp;</label>
+													<span class="text col-md-offset-3">Use spaces to separate tags. Use
+														single quotes (') for phrases.</span>
+												</div>
+											</form><!-- /.form-cnt -->
+
+										</div><!-- /.product-tab -->
+									</div><!-- /.tab-pane -->
+
+								</div><!-- /.tab-content -->
+							</div><!-- /.col -->
+						</div><!-- /.row -->
+					</div><!-- /.product-tabs -->
+
+					<!-- ============================================== UPSELL PRODUCTS ============================================== -->
+					{% if related_products %}
+					<section class="section featured-product wow fadeInUp">
+						<div class="section-title">
+							<h3>O'xshash Mahsulotlar</h3>
+						</div>
+						<div
+							class="owl-carousel home-owl-carousel upsell-product custom-carousel owl-theme outer-top-xs">
+							{% for product in related_products %}
+							<div class="item item-carousel">
+								<div class="products">
+
+									<div class="product">
+										<div class="product-image">
+										  <div class="image"> <a href="{% url "main:product_detail" product_id=product.id %}"><img src="{{product.get_banner_image.image.url}}" style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 100%; object-fit: cover;" alt=""></a>
+										  </div>
+										  <!-- /.image -->
+										  {% if product.discount %}
+										  <div class="tag hot"><span>{{product.discount}}%</span></div>
+										  {% else %}
+										  <div class="tag new"><span>Yangi</span></div>
+										  {% endif %}
+										</div>
+										<!-- /.product-image -->
+				
+										<div class="product-info text-left">
+										  <h3 class="name"><a href="{% url "main:product_detail" product_id=product.id %}">{{product.name|slice:":25"}}{% if product.name|length > 25  %}...{% endif %}</a></h3>
+										  <ul class="stars">
+											{% for i in "12345" %}
+											  {% if forloop.counter <= product.get_average_rating %}
+												  <li><i class="fa-solid fa-star" style="color:gold;font-size: 13px;"></i></li> <!-- Yulduz -->
+											  {% else %}
+												  <li><i class="fa-solid fa-star" style="color: grey;font-size: 13px;"></i></li> <!-- Bo'sh yulduz -->
+											  {% endif %}
+											{% endfor %}
+											<ul>
+										  <div class="description"></div>
+										  <div class="product-price"> <span class="price"> {{ product.get_discounted_price }} so'm </span> 
+										{% if product.discount %}<span class="price-before-discount">{{ product.get_format_price }} so'm</span>{% endif %} </div>
+										  <!-- /.product-price -->
+										  {% for color in product.colors.all %}
+											{% if not color.stock_quantity == 0 %}
+												  <input type="hidden" name="color" class="myCheckbox{{product.id}}" value="{{color.id}}">
+											{% endif %}
+										  {% endfor %}
+										</div>
+										<!-- /.product-info -->
+										<div class="cart clearfix animate-effect" style="width: 100%;left: 58%;">
+										  <div class="action">
+											<ul class="list-unstyled">
+											  <li class="add-cart-button btn-group">
+												<button onclick="addToCartHome(this)" data-product-id="{{product.id}}" data-toggle="tooltip" class="btn btn-primary icon" type="button" title="savatga">
+												  <i class="fa fa-shopping-cart"></i> </button>
+												<button onclick="addToCartHome(this)" data-product-id="{{product.id}}" class="btn btn-primary cart-btn" type="button">Savatga</button>
+											  </li>
+											  <li class="lnk wishlist bg-primary" onclick="toggleWishlist(this);toggleFavorite({{product.id}})">
+												<i class="icon fa fa-heart"></i>
+											  </li>
+				
+											</ul>
+										  </div>
+										  <!-- /.action -->
+										</div>
+										<!-- /.cart -->
+									</div>
+
+								</div><!-- /.products -->
+							</div>
+							{% endfor %}
+						</div><!-- /.home-owl-carousel -->
+					</section><!-- /.section -->
+					<!-- ============================================== UPSELL PRODUCTS : END ============================================== -->
+					{% endif %}
+				</div><!-- /.col -->
+				<div class="clearfix"></div>
+			</div><!-- /.row -->
+			<!-- ============================================== BRANDS CAROUSEL ============================================== -->
+<!-- /.logo-slider -->
+			<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+		</div><!-- /.container -->
+	</div><!-- /.body-content -->
+{% endblock content %}
+{% block js %}
+	<script>
+		// Barcha rang elementlarini olish
+		const colorItems = document.querySelectorAll('.color-item');
+		let selectedColor = null; // Faol rangni saqlash uchun
+
+		// Har bir rang elementiga click hodisasini bog'lash
+		colorItems.forEach(item => {
+			item.addEventListener('click', () => {
+				// Barcha elementlardan 'active' sinfini olib tashlash
+				document.querySelectorAll('.color-item.active').forEach(activeItem => {
+					activeItem.classList.remove('active');
+				});
+
+				// Joriy bosilgan elementga 'active' sinfini qo'shish
+				item.classList.add('active');
+				selectedColorId = item.getAttribute('data-id');
+				document.getElementById('selectedColorId').value = selectedColorId
+				selectedColor = item.getAttribute('data-color'); // Tanlangan rangni saqlash
+			});
+		});
+
+		// Tasdiqlash tugmasi bosilganda
+		const confirmButton = document.getElementById('confirmSelection');
+		// DOM elementlarni olish
+		const decreaseButton = document.querySelector('.decrease');
+		const increaseButton = document.querySelector('.increase');
+		const numberInput = document.querySelector('#numberInput');
+
+		// "+" tugmasi bosilganda qiymatni oshirish
+		increaseButton.addEventListener('click', () => {
+			let currentValue = parseInt(numberInput.value); // Hozirgi qiymatni olish
+			numberInput.value = currentValue + 1; // 1 ga oshirish
+		});
+
+		// "-" tugmasi bosilganda qiymatni kamaytirish
+		decreaseButton.addEventListener('click', () => {
+			let currentValue = parseInt(numberInput.value); // Hozirgi qiymatni olish
+			if (currentValue > 1) { // Minimal qiymatni tekshirish
+				numberInput.value = currentValue - 1; // 1 ga kamaytirish
+			}
+		});
+
+		// Qo'shimcha: Foydalanuvchi qo'lda minimal qiymatdan pastni kiritmasligi uchun
+		numberInput.addEventListener('input', () => {
+			if (numberInput.value < 1) {
+				numberInput.value = 1; // Minimal qiymatni saqlash
+			}
+		});
+		
+		
+		
+
+		
+		
+
+	</script>
+{% endblock js %}

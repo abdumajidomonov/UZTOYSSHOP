@@ -1,0 +1,676 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="keywords" content="MediaCenter, Template, eCommerce">
+  <meta name="robots" content="all">
+  <title>UzToys-Shop - {% block title %}{% endblock title %}</title>
+
+  <meta name="csrf-token" content="{{ csrf_token }}">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+
+  <!-- Customizable CSS -->
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/blue.css' %}">
+  <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/owl.transitions.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/rateit.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap-select.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+  <link rel="stylesheet" href="{% static 'css/myresponsive.css' %}">
+  
+  <!-- Icons/Glyphs -->
+  <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Mouse+Memoirs" rel="stylesheet">
+
+  <style>
+    .stars {
+        list-style-type: none;  /* Yulduzlarning oldidagi nuqtalarni olib tashlash */
+        padding: 0;  /* Bo'shliqni olib tashlash */
+        margin: 0;   /* Marginni olib tashlash */
+        display: block; /* Bu holda ul element block sifatida ko'rinadi */
+        width: 100%;  /* Kenglikni 100% ga sozlash */
+    }
+    
+    .stars li {
+        display: inline-block; /* Yulduzlarni gorizontalga qo'yish */
+        margin-right: 5px; /* Yulduzlar orasida bo'shliq */
+    }
+    
+    .stars li i {
+        font-size: 16px; /* Yulduzlarning o'lchamini belgilash */
+    }
+    
+  </style>
+  {% block css %}{% endblock css %}
+</head>
+
+<body class="cnt-home">
+  <!-- ============================================== HEADER ============================================== -->
+  <header class="header-style-1 {% if request.resolver_match.url_name == 'profile' %}profile-top-header-responss{% endif %}">
+
+    <!-- ============================================== TOP MENU ============================================== -->
+    <div class="top-bar animate-dropdown">
+      <div class="container">
+        <div class="header-top-inner">
+          <div class="cnt-account">
+            <ul class="list-unstyled">
+              <li>{% if user.is_authenticated %}<a href="{% url "account:profile" %}"><i class="icon fa fa-user"></i> Mening hisobim</a>{% else %}<a href="#" onclick="LoginShow()"><i class="icon fas fa-sign-in-alt"></i> Hisobga kirish</a>{% endif %}</li>
+              <li class="hidden-xs"><a href="{% url "main:favorite_list" %}"><i class="icon fa fa-heart"></i>Istaklar roʻyxati</a></li>
+              <li class="hidden-xs"><a href="{% url "cart:cart" %}"><i class="icon fa fa-shopping-cart"></i>Mening savatim</a></li>
+            </ul>
+          </div>
+
+          <div class="cnt-block">
+            <ul class="list-unstyled list-inline">
+              <li> <a href="https://www.google.com/maps?ll=40.82451,72.355654&z=15&t=h&hl=ru&gl=US&mapclient=embed&q=40%C2%B049%2728.2%22N+72%C2%B021%2720.4%22E+40.824500,+72.355667@40.8245,72.3556667"><span class="value">Andijon Shaxar</span></a>
+              </li>
+            </ul>
+            <!-- /.list-unstyled -->
+          </div>
+          <!-- /.cnt-cart -->
+          <div class="clearfix"></div>
+        </div>
+        <!-- /.header-top-inner -->
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.header-top -->
+    <!-- ============================================== TOP MENU : END ============================================== -->
+    <div class="main-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-3 logo-holder respons-none">
+            <!-- ============================================================= LOGO ============================================================= -->
+            <div class="logo"> <a href="{% url "main:home" %}"> <img src="{% static "images/logo-alfa.png" %}" style="width: 135px;"
+                  alt="logo"> </a> </div>
+            <!-- /.logo -->
+            <!-- ============================================================= LOGO : END ============================================================= -->
+          </div>
+          <!-- /.logo-holder -->
+
+          <div class="col-xs-12 col-sm-8 col-md-6 top-search-holder ">
+            <!-- /.contact-row -->
+            <!-- ============================================================= SEARCH AREA ============================================================= -->
+            <div class="search-area">
+                <form method="get" action="{% url "main:product_list" %}" class="search">
+                    <div class="control-group">
+    
+                      <input class="search-field search-input"  name="q" id="search-field" placeholder="Bu yerda qidiring..." autocomplete="off" value="{{query}}" />
+                      <button type="submit" class="btn btn-info" style="border: 7px solid #5bc0de !important;float: right !important;"><i class="fas fa-search"></i></button>
+                      <ul class="search-history" id="search-history">
+                        <li class="search-content">
+                          <span href="/category.html" class="search-history-a">
+                            <a href="/category.html"><i class="fas fa-clock icon"></i> 106</a>
+                            <i class="fas fa-xmark delete"></i>
+                          </span>
+                          <span href="/category.html" class="search-history-a">
+                            <a href="/category.html"><i class="fas fa-clock icon"></i> smart phone</a>
+                            <i class="fas fa-xmark delete"></i>
+                          </span>
+                          <span href="/category.html" class="search-history-a">
+                            <a href="/category.html"><i class="fas fa-clock icon"></i> Soatlar</a>
+                            <i class="fas fa-xmark delete"></i>
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </form> 
+              <!-- don't delete start -->
+              <script>
+                const box1 = document.getElementById('search-field');
+                const box2 = document.getElementById('search-history');
+                const box1Height = box1.offsetHeight;
+                const box1Top = box1.offsetTop;
+
+                box2.style.position = 'absolute';
+                box2.style.top = `${box1Top + box1Height}px`;
+                box2.style.left = `${box1.offsetLeft}px`;
+                // box2 ni box1 ga moslashtirish
+                box2.style.width = `${box1.offsetWidth}px`;
+
+                const inputField = document.querySelector('.search-field');
+                const message = document.querySelector('.search-history');
+
+                inputField.addEventListener('focus', () => {
+                  message.style.display = 'block';
+                });
+
+                inputField.addEventListener('blur', () => {
+                  setTimeout(() => {
+                    if (!message.contains(document.activeElement)) {
+                      message.style.display = 'none'; // Blur bo'lsa yashir
+                    }
+                  }, 200);
+                });
+              </script>
+              <!-- don't delete  end -->
+            </div>
+            <!-- /.search-area -->
+            <!-- ============================================================= SEARCH AREA : END ============================================================= -->
+          </div>
+          <!-- /.top-search-holder -->
+
+          <div class="col-xs-12 col-sm-4 col-md-3 animate-dropdown top-cart-row respons-none">
+            <!-- ============================================================= SHOPPING CART DROPDOWN ============================================================= -->
+
+            <a href="{% url "cart:cart" %}" style="pointer-events: auto !important;"
+              onclick="window.location.href='{% url "cart:cart" %}'" class="dropdown dropdown-cart">
+              <div class="dropdown-toggle lnk-cart" data-toggle="dropdown">
+                <div class="items-cart-inner">
+                  <div class="basket"> <i class="glyphicon glyphicon-shopping-cart"></i> </div>
+                  <div class="basket-item-count"><span class="cart-count count">{{cart_count}}</span></div>
+                  <div class="total-price-basket"> <span class="lbl">Savat -</span> <span class="total-price"> <span
+                        class="sign"></span><span class="value cart_total_price">{% if cart_total_price %}{{cart_total_price}}{% else %}0{% endif %} so'm</span> </span> </div>
+                </div>
+              </div>
+
+              <!-- /.dropdown-menu-->
+            </a>
+            <!-- /.dropdown-cart -->
+
+            <!-- ============================================================= SHOPPING CART DROPDOWN : END============================================================= -->
+          </div>
+          <!-- /.top-cart-row -->
+        </div>
+        <!-- /.row -->
+
+      </div>
+      <!-- /.container -->
+
+    </div>
+    <!-- /.main-header -->
+
+    <!-- ============================================== NAVBAR ============================================== -->
+    <div class="header-nav animate-dropdown">
+      <div class="container">
+        <div class="yamm navbar navbar-default" role="navigation">
+          <div class="navbar-header">
+            <button data-target="#mc-horizontal-menu-collapse" data-toggle="collapse" class="navbar-toggle collapsed"
+              type="button">
+              <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
+                class="icon-bar"></span> <span class="icon-bar"></span> </button>
+          </div>
+          <div class="nav-bg-class">
+            <div class="navbar-collapse collapse" id="mc-horizontal-menu-collapse">
+              <div class="nav-outer">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown {% if request.resolver_match.url_name == 'home' %}active{% elif not request.resolver_match %}active{% endif %}">
+                        <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    </li>
+                    <li class="dropdown hidden-sm {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+                        <a href="{% url 'main:product_list' %}">Turlar</a>
+                    </li>
+                    <li class="dropdown {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                        <a href="{% url 'main:contact' %}">Aloqa</a>
+                    </li>
+                    <li class="dropdown {% if request.resolver_match.url_name == 'orders' %}active{% endif %}">
+                        <a href="{% url "main:my-orders" %} {% if request.resolver_match.url_name == 'my-orders' %}active{% endif %}">Buyurtmalarim</a>
+                    </li>
+                    <li class="dropdown {% if request.resolver_match.url_name == 'favorite_list' %}active{% endif %}">
+                        <a href="{% url 'main:favorite_list' %}"><i class="fa-regular fa-heart"></i> Sevimlilar</a>
+                    </li>
+                    <li class="dropdown {% if user.is_authenticated and request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'account:profile' %}"><i class="icon fa fa-user"></i> Mening hisobim</a>
+                        {% else %}
+                            <a href="#" onclick="LoginShow()"><i class="icon fas fa-sign-in-alt"></i> Hisobga kirish</a>
+                        {% endif %}
+                    </li>
+                    <li class="dropdown {% if request.resolver_match.url_name == 'cart' %}active{% endif %}">
+                        <a href="{% url 'cart:cart' %}">
+                            <i class="glyphicon glyphicon-shopping-cart"></i>Savat 
+                            {% if cart_count %}
+                                <span class="bestnotifications cart-count">{{ cart_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    
+
+                </ul>
+                <!-- /.navbar-nav -->
+                <div class="clearfix"></div>
+              </div>
+              <!-- /.nav-outer -->
+            </div>
+            <!-- /.navbar-collapse -->
+
+          </div>
+          <!-- /.nav-bg-class -->
+        </div>
+        <!-- /.navbar-default -->
+      </div>
+      <!-- /.container-class -->
+
+    </div>
+    <!-- /.header-nav -->
+    <!-- ============================================== NAVBAR : END ============================================== -->
+
+  </header>
+  <style>
+    .alert-container {
+        position: fixed; /* Xabarni doimiy joylashtirish */
+        top: 150px; /* Ekranning yuqori qismiga joylashtirish */
+        right: 30px; /* O'ng tomonda joylashishini ta'minlash */
+        z-index: 1050; /* Xabar ustida bo'lishini ta'minlash */
+    }
+
+    .alert {
+        width: 350px; /* Kenglikni o'zgartirish */
+        padding: 10px 15px; /* Xabar ichidagi margin/padding */
+        font-size: 14px; /* Matn hajmi */
+        margin-bottom: 10px; /* Xabarlar orasidagi bo'shliq */
+        opacity: 0; /* Dastlabki ko'rinmas holat */
+        transform: translateX(100%); /* Xabarni o'ngdan chiqarish */
+        animation: slideIn 0.5s forwards, fadeOut 1s 3.5s forwards; /* Animatsiya qo'shish */
+    }
+
+    /* Animatsiya: Xabarni o'ngdan chapga siljitish */
+    @keyframes slideIn {
+        0% {
+            transform: translateX(100%); /* O'ng tomondan chiqadi */
+            opacity: 0; /* Boshlang'ich ko'rinmas holat */
+        }
+        100% {
+            transform: translateX(0); /* Asl joyiga qaytadi */
+            opacity: 1; /* Ko'rinish */
+        }
+    }
+
+    /* Animatsiya: Xabarni asta-sekin yo'qotish */
+    @keyframes fadeOut {
+        0% {
+            opacity: 1; /* Ko'rinish */
+        }
+        100% {
+            opacity: 0; /* Ko'rinmas holat */
+            transform: translateX(100%); /* O'ngga siljiydi */
+        }
+    }
+</style>
+
+
+<div class="alert-container">
+  {% for message in messages %}
+      <div class="alert alert-{% if message.tags == "error" %}danger{% else %}{{ message.tags }}{% endif %}">
+          {{ message }}
+      </div>
+  {% endfor %}
+</div>
+    <script>
+      let alertQueue = []; // Xabarlar navbati
+  
+      function showAlert(message, type = 'success') {
+          const alertContainer = document.querySelector('.alert-container');
+          const alert = document.createElement('div');
+          alert.classList.add('alert', `alert-${type}`);
+          alert.innerText = message;
+  
+          alertContainer.appendChild(alert);
+  
+          // Xabarni ko'rsatish animatsiyasini boshlash
+          setTimeout(() => {
+              alert.style.opacity = 1;
+              alert.style.transform = 'translateX(0)';
+          }, 100); // Xabar 0.1 sekundda chiqadi
+  
+          // Xabarni yo'q qilish uchun animatsiya
+          setTimeout(() => {
+              alert.style.opacity = 0;
+              alert.style.transform = 'translateX(100%)';
+          }, 4000); // 4 sekunddan so'ng animatsiya boshlanadi
+  
+          // Xabarni olib tashlash
+          setTimeout(() => {
+              alert.remove();
+          }, 5000); // 5 sekunddan keyin xabarni o'chirish
+      }
+  
+      document.addEventListener('DOMContentLoaded', function () {
+          const alerts = document.querySelectorAll('.alert');
+
+          alerts.forEach((alert, index) => {
+              // Xabarlar navbat bilan chiqishi uchun 0.5 soniya farq bilan animatsiyani sozlash
+              setTimeout(() => {
+                  alert.style.opacity = 1;
+                  alert.style.transform = 'translateX(0)';
+              }, index * 500); // 0.5 sekund farq bilan
+
+              // Xabarni o'chirish animatsiyasini boshlash
+              setTimeout(() => {
+                  alert.style.opacity = 0;
+                  alert.style.transform = 'translateX(100%)';
+              }, 4000 + index * 500); // 4 sekunddan keyin, keyin har bir xabarni sekin yo'qotish
+          });
+      });
+
+  </script>
+  
+  
+  {% block content %}{% endblock content %}
+
+  <!-- ============================================================= FOOTER ============================================================= -->
+
+  <footer id="footer" class="footer color-bg">
+
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-sm-6 col-md-3">
+            <div class="module-heading">
+              <h4 class="module-title">Biz bilan bog'lanish</h4>
+            </div>
+            <!-- /.module-heading -->
+
+            <div class="module-body">
+              <ul class="toggle-footer">
+                <li class="media">
+                  <div class="pull-left"> <span class="icon fa-stack fa-lg"> <i
+                        class="fa fa-map-marker fa-stack-1x fa-inverse"></i> </span> </div>
+                  <a target="_blank" href="https://maps.app.goo.gl/AyEcyrqTmoRxVK978" class="media-body">
+                    <p class="h5">Andijon, Andijon Viloyati,<br> Oʻzbekiston, Jahon Bozor</p>
+                  </a>
+                </li>
+                <li class="media">
+                  <div class="pull-left"> <span class="icon fa-stack fa-lg"> <i
+                        class="fa fa-mobile fa-stack-1x fa-inverse"></i> </span> </div>
+                  <a target="_blank" href="tel:+998907594797" class="media-body">
+                    <p class="h5">+998907594797<br></p>
+                  </a>
+                </li>
+                <li class="media">
+                  <div class="pull-left"> <img src="{% static "images/telegram-icon.png" %}"
+                      style="width: 40px;background: #fc8db8;border-radius: 50%;" alt=""></div>
+                  <p class="media-body"> <span><a href="https://t.me/UzToysShopbot" target="_blank">Telegram Bot</a></span>
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <!-- /.module-body -->
+          </div>
+          <!-- /.col -->
+
+          <div class="col-xs-12 col-sm-6 col-md-3">
+            <div class="module-heading">
+              <h4 class="module-title">Mijozlarga xizmat ko'rsatish</h4>
+            </div>
+            <!-- /.module-heading -->
+
+            <div class="module-body">
+              <ul class='list-unstyled'>
+                <li><a href="{% url "main:faq" %}" title="faq">Tez-tez so'raladigan savollar</a></li>
+                <li><a href="{% url "main:product_list" %}?sorting=arzon&price-from=0&price-to=20000" title="Popular Searches">Arzon mahsulotlar</a></li>
+                <li><a href="{% url "main:product_list" %}" title="Popular Searches">Kengaytirilgan qidiruv</a></li>
+              </ul>
+            </div>
+            <!-- /.module-body -->
+          </div>
+          <!-- /.col -->
+
+          <div class="col-xs-12 col-sm-6 col-md-3">
+            <div class="module-heading">
+              <h4 class="module-title">Shaxsiy hisob</h4>
+            </div>
+            <!-- /.module-heading -->
+
+            <div class="module-body">
+              <ul class='list-unstyled'>
+                <li class="first"><a href="{% url "account:profile" %}">Mening hisobim</a></li>
+                <li><a href="{% url 'main:favorite_list' %}">Istaklar ro'yxati</a></li>
+                <li><a href="{% url "main:my-orders" %}">Mening buyurtmalarim</a></li>
+              </ul>
+            </div>
+            <!-- /.module-body -->
+          </div>
+          <!-- /.col -->
+
+          <div class="col-xs-12 col-sm-6 col-md-3">
+            <div class="module-heading">
+              <h4 class="module-title">Biz xaqimizda</h4>
+            </div>
+            <!-- /.module-heading -->
+
+            <div class="module-body">
+              <ul class='list-unstyled'>
+                <li class="first"><a href="{% url "main:contact" %}">Aloqa markazi</a></li>
+                <li><a href="{% url "main:faq" %}">Savol-Javob</a></li>
+                <li class="last"><a href="https://www.google.com/maps?ll=40.82451,72.355654&z=15&t=h&hl=ru&gl=US&mapclient=embed&q=40%C2%B049%2728.2%22N+72%C2%B021%2720.4%22E+40.824500,+72.355667@40.8245,72.3556667" title="Where is my order?">Do'kon manzili</a></li>
+
+              </ul>
+            </div>
+            <!-- /.module-body -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="copyright-bar">
+      <div class="container">
+        <div class="col-xs-12 col-sm-6 no-padding social">
+
+          <ul class="link our-society ">
+            <li><a class="telegram-icon" target="_blank" href="https://t.me/UzToysShop1"><i
+                  class="fa-brands fa-telegram"></i></a></li>
+            <li><a class="instagram-icon" target="_blank" href="https://www.instagram.com/uztoysshop"><i
+                  class="fa-brands fa-instagram"></i></a></li>
+            <li><a class="youtube-icon" target="_blank" href="https://www.facebook.com/uztoysshop"><i
+                  class="fa-brands fa-youtube"></i></a></li>
+            <li><a class="facebook-icon" target="_blank" href="https://youtube.com/@uztoysshop"><i
+                  class="fa-brands fa-facebook"></i></a></li>
+          </ul>
+        </div>
+        <div class="col-xs-12 col-sm-6 no-padding">
+          <div class="clearfix payment-methods" style="float: right;">
+            <li
+              style="width: 100px; height: 20px;background-image:url({% static "images/payme-01.png" %});background-size:cover ;background-position: center;">
+            </li>
+            </ul>
+          </div>
+          <!-- /.payment-methods -->
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- ============================================================= FOOTER : END============================================================= -->
+
+
+
+<input type="hidden" class="next_value" value="{{ request.GET.next }}" name="next">
+  <!-- Savatcha alerti -->
+  <div id="cart-alert">
+    Mahsulot Savatda!
+  </div>
+
+  
+
+  <!-- ============================= regiter or login start ============================= -->
+
+
+  <div id="login-section" class="login-section">
+    <!-- Telefon raqami kiritish formasi -->
+    <form id="login-content" class="login-content" onsubmit="LoginSmsShow(event)">
+      <h4>Telefon raqamini kiriting</h4>
+      <p class="h5 " style="padding-bottom: 10px;">Tasdiqlash kodini SMS orqali yuboramiz</p>
+      <div id="error-message" style="display:none; color: red; padding-bottom: 10px;"></div>
+      <input type="tel" id="phone" class="phonenumber" placeholder="Telefon raqamni kiriting" value="+998"
+        required><br><br>
+      <button type="submit" class="login-btn">Tasdiqlash</button>
+      <button type="button" onclick="LoginShow()" class="xmark-btn">+</button>
+    </form>
+
+    <!-- SMS kodini kiritish formasi -->
+    <form id="sms-form" class="login-sms-content tag-hide" action="/account/verify">
+      <h4>Kodni Kiriting</h4>
+      <p class="h5" style="padding-bottom: 10px;">Tasdiqlash kodini <span class="phonenumbersee "
+          style="font-weight: bolder;"></span> raqamiga SMS orqali yuborildi</p>
+      <div id="sms-error-message" style="display:none; color: red;padding-bottom: 10px;"></div>
+      <!-- SMS uchun xato xabari -->
+      <input type="number" id="sms-code" class="phonenumber" oninput="if (this.value.length > 6) this.value = this.value.slice(0, 6);" placeholder="SMS kodni kiriting" required><br><br>
+      <!-- <button id="tasdiqbtn" type="submit" class="login-btn" >Tasdiqlash</button><br> -->
+      <button id="sendButton" class="login-btn">Tasdiqlash</button>
+      <button type="button"  class="xmark-btn" style="transform: rotate(0);color: gray;" onclick="LoginShow();LoginShow()"><i class="fas fa-sign-out-alt"></i></button>
+
+      <div id="timer" class="mt-3"></div>
+      <div id="errorMessage" class="text-danger tag-hide mt-2">SMS kodi xato!</div>
+      <div id="successMessage" class="text-success tag-hide mt-2">SMS kodi to'g'ri!</div>
+
+
+    </form>
+
+    <div class="login-bg"></div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+  <!-- ============================== regiter or login end ============================= -->
+
+
+
+
+
+
+
+
+
+
+  <!-- ================================== mobile-navbar start ==================================  -->
+
+
+
+  <div class="mobile-navbar-section">
+    <div class="container">
+      <ul class="mobile-navbar">
+        <li class="item">
+          <a href="{% url "main:home" %}" style="color: #428bca;">
+            <i class="fa-solid fa-house"></i>
+          </a>
+        </li>
+        <li class="item">
+          <a href="{% url "main:product_list" %}">
+            <i class="fa-brands fa-searchengin"></i>
+          </a>
+        </li>
+        <li class="item">
+          <a href="{% url "cart:cart" %}">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="notifications cart-count">{{cart_count}}</span>
+          </a>
+        </li>
+        <li class="item">
+          <a href="{% url "main:favorite_list" %}">
+            <i class="fa-regular fa-heart"></i>
+          </a>
+        </li>
+        <li class="item">
+          <a href="{% url "account:profile" %}">
+            <i class="fa-solid fa-user"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+
+
+
+
+  <!-- =================================== mobile-navbar end ================================== -->
+
+
+
+
+
+  <!-- JavaScripts placed at the end of the document so the pages load faster -->
+  
+  <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap-hover-dropdown.min.js' %}"></script>
+  <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'js/echo.min.js' %}"></script>
+  <script src="{% static 'js/jquery.easing-1.3.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap-slider.min.js' %}"></script>
+  <script src="{% static 'js/jquery.rateit.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/lightbox.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+  <script src="{% static 'js/wow.min.js' %}"></script>
+  <script src="{% static 'js/scripts.js' %}"></script>
+  <script src="{% static 'js/myscript.js' %}"></script>
+  {% block js %}{% endblock js %}
+
+  <script>
+    let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+    function updateSearchContent() {
+        const searchContent = document.querySelector('.search-content');
+        searchContent.innerHTML = ''; // Eski elementlarni tozalash
+
+        // Faqat eng oxirgi 5 ta elementni tanlash uchun slice metodi
+        searchHistory.slice(0, 5).forEach((item, index) => {
+            const span = document.createElement('span');
+            span.className = 'search-history-a';
+
+            const anchor = document.createElement('a');
+            anchor.href = `{% url "main:product_list" %}?q=` + encodeURIComponent(item); // Havola
+            anchor.innerHTML = `<i class="fas fa-clock icon"></i> ${item}`;
+
+            const deleteIcon = document.createElement('i');
+            deleteIcon.className = 'fas fa-xmark delete';
+
+            deleteIcon.addEventListener('click', (e) => {
+                e.preventDefault(); // Havolani ochilishini oldini olish
+                removeSearchItem(index);
+            });
+
+            // Span ichiga qo'shish
+            span.appendChild(anchor);
+            span.appendChild(deleteIcon);
+
+            searchContent.appendChild(span);
+        });
+    }
+
+    function removeSearchItem(index) {
+        searchHistory.splice(index, 1); // Elementni massivdan o'chirish
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory)); // Yangilangan massivni saqlash
+        updateSearchContent(); // search-content ni yangilash
+    }
+
+    updateSearchContent();
+
+    document.querySelector('.search').addEventListener('submit', function(event) {
+        const input = document.querySelector('.search-input');
+        const query = input.value.trim();
+        if (query && !searchHistory.includes(query)) {
+            searchHistory.unshift(query); // Eng oxirgi qidiruvni boshiga qo'shish
+            if (searchHistory.length > 10) searchHistory.pop(); // 10 ta elementdan ko'p bo'lsa, eng oxirgisini o'chirish
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory)); // localStorage ga saqlash
+        }
+
+        updateSearchContent(); // search-content ni yangilash
+    });
+</script>
+
+</body>
+
+</html>  

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Aloqa{% endblock title %}
+{% block content %}
+
+<div class="breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-inner">
+            <ul class="list-inline list-unstyled">
+                <li style="display:inline;"><a href="{% url 'main:home' %}">Bosh Sahifa</a></li>
+                <li class="active" style="display:inline;">Aloqa</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="body-content">
+    <div class="container">
+        <div class="contact-page">
+            <form action="{% url 'main:contact' %}" method="POST" class="row">
+                {% csrf_token %}
+                <div class="col-md-12 contact-map outer-bottom-vs">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d4961.167218324755!2d72.355654!3d40.82451!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNDDCsDQ5JzI4LjIiTiA3MsKwMjEnMjAuNCJF!5e1!3m2!1sru!2s!4v1735807327944!5m2!1sru!2s" 
+                            width="600" height="450" style="border:0"></iframe>
+                </div>
+
+                <div class="col-md-9 contact-form">
+                    <div class="col-md-12 contact-title">
+                        <h4>Aloqa Formasi</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="register-form">
+                            <div class="form-group">
+                                <label class="info-title" for="first_name">Ism <span>*</span></label>
+                                <input type="text" class="form-control unicase-form-control text-input" id="first_name" name="first_name" value="{% if user.first_name %}{{ user.first_name }}{% endif %}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="register-form">
+                          <div class="form-group">
+                              <label class="info-title" for="last_name">Familya <span>*</span></label>
+                              <input type="text" class="form-control unicase-form-control text-input" id="last_name" name="last_name" value="{% if user.first_name %}{{ user.first_name }}{% endif %}" required>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="register-form">
+                            <div class="form-group">
+                                <label class="info-title" for="phone_number">Telefon raqam <span>*</span></label>
+                                <input type="text" class="form-control unicase-form-control text-input" id="phone" name="phone_number" value="{% if user.phone_number %}{{user.get_format_phone}}{% endif %}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="register-form">
+                            <div class="form-group">
+                                <label class="info-title" for="title">Manzil <span>*</span></label>
+                                <input type="text" value="{% if request.user.address %}{{request.user.address}}{% endif %}" class="form-control unicase-form-control text-input" id="title" name="address" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="register-form">
+                            <div class="form-group">
+                                <label class="info-title" for="description">Ma'lumot <span>*</span></label>
+                                <textarea class="form-control unicase-form-control" id="description" name="description" required style="resize: none;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 outer-bottom-small m-t-20">
+                        <button type="submit" class="btn-upper btn btn-primary checkout-page-button">Xabar yuborish</button>
+                    </div>
+                </div>
+
+                <div class="col-md-3 contact-info">
+                    <div class="contact-title">
+                        <h4>Informatsiya</h4>
+                    </div>
+                    <div class="clearfix address">
+                        <span class="contact-i"><i class="fa fa-map-marker"></i></span>
+                        <span class="contact-span">Andijon, Andijon Viloyati, Oʻzbekiston, Jahon Bozor</span>
+                    </div>
+                    <div class="clearfix phone-no">
+                        <span class="contact-i"><i class="fa fa-mobile"></i></span>
+                        <span class="contact-span">+998907594797</span>
+                    </div>
+                    <div class="clearfix email">
+                        <span class="contact-i"><i class="fa fa-envelope"></i></span>
+                        <span class="contact-span"><a href="mailto:marazzo@Themesground.com">bahodirjonrus0807@gmail.com</a></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'switchstylesheet/switchstylesheet.js' %}"></script>
+    <script>
+        $(document).ready(function(){ 
+            $(".changecolor").switchstylesheet( { seperator:"color"} );
+            $('.show-theme-options').click(function(){
+                $(this).parent().toggleClass('open');
+                return false;
+            });
+        });
+
+        $(window).bind("load", function() {
+           $('.show-theme-options').delay(2000).trigger('click');
+        });
+
+        const phoneInput = document.getElementById("phone");
+
+        phoneInput.addEventListener("input", function (e) {
+            let input = e.target.value.replace(/\D/g, ""); // Faqat raqamlarni olib qolamiz
+
+            if (input.startsWith("998")) {
+                input = input.substring(3); // Agar 998 bo'lsa, uni olib tashlaymiz
+            }
+
+            if (input === "") {
+                e.target.value = "";
+                return;
+            }
+
+            let formattedNumber = "+998";
+            if (input.length > 0) {
+                formattedNumber += " (" + input.substring(0, 2);
+            }
+            if (input.length >= 3) {
+                formattedNumber += ") " + input.substring(2, 5);
+            }
+            if (input.length >= 6) {
+                formattedNumber += "-" + input.substring(5, 7);
+            }
+            if (input.length >= 8) {
+                formattedNumber += "-" + input.substring(7, 9);
+            }
+
+            if (input.length > 9) {
+                input = input.substring(0, 9);
+            }
+
+            e.target.value = formattedNumber;
+        });
+    </script>
+{% endblock js %}

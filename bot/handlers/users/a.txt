@@ -1,0 +1,12 @@
+[Unit]
+Description=gunicorn daemon for Django project
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/root/uztoysshop/
+ExecStart=/root/uztoysshop/env/bin/gunicorn --workers 3 --bind unix:/root/uztoysshop/toyshop.sock toyshop.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

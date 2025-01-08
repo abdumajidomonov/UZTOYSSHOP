@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Buyurtmalar{% endblock title %}
+
+{% block css %}
+    <style>
+        /* Buyurtmalar konteyneri */
+        .orders-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: stretch !important;
+        }
+
+        /* Kartaning umumiy uslubi */
+        .order-card {
+            height: fit-content;
+            position: relative;
+            border-radius: 10px;
+            padding: 20px;
+            padding-top: 10PX;
+            margin: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #8a8a8a8c;
+            
+        }
+
+        .status-all {
+            padding: 4px 10px;
+            border-radius: 50px;
+            color: white;
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        
+        /* Holatga qarab ranglarni o'zgartirish (faqat 'Holati' degan so'zga orqa fon) */
+        .order-card .status-ready {
+            background-color: #28a745;
+        }
+
+        .order-card .status-preparing {
+            background-color: #ffc107;
+        }
+
+        .order-card .status-on-the-way {
+            background-color: #007bff;
+        }
+
+        .order-card .status-unconfirmed {
+            background-color: #dc3545;
+        }
+
+        /* Kartadagi sarlavha */
+        .order-card .product-id {
+            margin-bottom: 10px;
+            
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+
+        }
+
+        /* Kartadagi matn */
+        .order-card p {
+            margin: 0 !important;
+            font-size: 16px;
+        }
+
+        /* Mahsulotlarni ko'rish tugmasi */
+        .view-products-btn {
+            background-color: #4696ff;
+            color: rgb(255, 255, 255);
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .view-products-btn:hover {
+            background-color: #1466ff;
+            color: white;
+        }
+
+        /* Mahsulotlar konteyneri */
+        .products-container {
+            display: none;
+            background-color: #ffffff;
+            padding: 10px;
+            padding-bottom: 0;
+            border-radius: 10px;
+
+        }
+
+        /* Mahsulot uslubi */
+        .product {
+            display: flex;
+            flex-wrap: nowrap !important;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .product img {
+            width: 110px;
+            height: 110px;
+            margin-right: 20px;
+            border-radius: 5px;
+            resize: unset;
+            background-size: cover;
+        }
+
+
+
+        .product-info p {
+            font-size: 16px;
+            font-weight: normal;
+            color: #333333;
+        }
+
+
+
+        .workday {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        font-size: 15px;
+        }
+
+        /* Mahsulotlarni ko'rsatish: responsive */
+        @media (max-width:450px) {
+            .order-card .product-id {
+                margin-bottom: 10px;
+                
+                font-size: 16px;
+    
+            }
+            .status-all {
+                padding: 4px 6px;
+                border-radius: 50px;
+                color: white;
+                font-weight: normal;
+                font-size: 12px;
+            }
+            .order-card {
+                padding: 15px;
+                padding-top: 5px;
+                margin-bottom: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border: 1px solid #8a8a8a8c;
+            }
+
+        }
+
+        @media (max-width: 400px) {
+
+            .product img {
+                width: 90px;
+                height: 90px !important;
+            }
+            .workday {
+                font-size: 13px;
+                }
+        }
+
+
+        /* Tab konteynerini sozlash */
+        .my-tabs {
+            display: flex;
+            /* border-bottom: 2px solid #ddd; */
+        }
+
+        /* Har bir tabni sozlash */
+        .my-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            /* border: 1px solid #ddd; */
+            margin-right: 5px;
+            /* background-color: #f1f1f1; */
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+
+        .my-tab:hover {
+            background-color: #fc8db879;
+        }
+
+        /* Aktiv tab uchun stil */
+        .my-tab.active {
+            background-color: #fc8db8;
+            color: white;
+        }
+
+        /* Tab kontentini sozlash */
+        .my-tab-content {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .my-tab-content.active {
+            display: block;
+        }
+
+        .pp-left {
+            float: right;
+        }
+    </style>
+{% endblock css %}
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+      <div class="breadcrumb-inner">
+          <ul class="list-inline list-unstyled">
+              <li style="display:inline;"><a href="{% url 'main:home' %}">Bosh Sahifa</a></li>
+              <li class="active" style="display:inline;">Buyurtmalarim</li>
+          </ul>
+      </div>
+  </div>
+</div>
+    <main>
+
+        <div class="container" style="margin-top: 50px;">
+            <!-- Tabs -->
+            <h3 class="text-center">Buyurtmalarim</h3>
+            <div class="my-tabs">
+                <div class="my-tab active" id="home-tab">Hozirgi</div>
+                <div class="my-tab" id="profile-tab">Hammasi</div>
+            </div>
+
+            <!-- Tab content -->
+            <div class="my-tab-content active" id="home-content">
+                <div class="orders-container">
+                  {% for order in new_order %}
+                    <!-- Unconfirmed buyurtma -->
+                    <div class="order-card">
+                        <h4 class="product-id "><span>Buyurtma ID: {{order.id}}</span> 
+                          <span class="status-unconfirmed status-all">{{order.get_status_display}}</span>
+                        </h4>
+
+                        <p><strong>Buyurtma sanasi:</strong> <span class="pp-left">{{order.created_at|date:"d-m-Y"}}</span></p>
+                        <p><strong>Kelish sanasi:</strong> <span class="pp-left">
+                          {% if order.status == "P" %}
+                          <span style="color:yellow;">Kutilmoqda</span>
+                          {% elif order.status == "F" %}
+                            <span style="color:red;">Bekor qilingan</span>
+                          {% elif order.status == "S" %}
+                            <span style="color:green;">Yetkazilgan</span>
+                          {% else %}
+                            {{ order.date|date:"d-m-Y" }}
+                          {% endif %}
+                        </span></p>
+                        <p><strong>Ish vaqti</strong></p>
+                        
+                        <ul class="workdays">
+                            <li class="workday"><span>Dushanba</span><span>09:00 - 12:00, 13:30 - 18:00</span></li>
+                            <li class="workday"><span>Seyshanba</span><span>09:00 - 12:00, 13:30 - 18:00</span></li>
+                            <li class="workday"><span>Chorshanba</span><span>09:00 - 12:00, 13:30 - 18:00</span></li>
+                            <li class="workday"><span>Payshanba</span><span>09:00 - 12:00, 13:30 - 18:00</span></li>
+                            <li class="workday"><span>Juma</span><span>09:00 - 12:00, 13:30 - 18:00</span></li>
+                            <li class="workday"><span>Shanba</span><span>09:00 - 12:00, 13:30 - 18:00</span></li>
+                            <li class="workday"><span>Yakshanba</span><span>09:00 - 12:00, 13:30 - 18:00</span></li>
+                            
+                        </ul>
+                        
+                        <p><strong>{{order.items.count}} ta mahsulot</strong> <span class="pp-left"> {{order.get_format_price}} UZS</span></p>
+
+                        <a class="view-products-btn" id="view-products-btn">Mahsulotlarni ko'rish</a>
+                        <div class="products-container" id="products-container">
+                            {% for product in order.items.all %}
+                              <hr>
+                              <div class="product">
+                                  <img src="{{product.product.get_banner_image.image.url}}">
+                                  <div class="product-info">
+                                      <p>{{product.product.name|slice:":18"}}{% if product.product.name|length > 18  %}...{% endif %}</p>
+                                      <p><strong>Rang:</strong> {{product.color.color.name}}</p>
+                                      <p><strong>Miqdor:</strong> {{product.quantity}} ta</p>
+                                      <p><strong>Narxi:</strong> {{product.product.get_discounted_price}} UZS</p>
+                                  </div>
+                              </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                  {% endfor %}
+                </div>
+            </div>
+            <div class="my-tab-content" id="profile-content">
+                <div class="orders-container">
+                  {% for order in orders %}
+                  <!-- Unconfirmed buyurtma -->
+                  <div class="order-card">
+                      <h4 class="product-id "><span>Buyurtma ID: {{order.id}}</span> 
+                        <span class="status-unconfirmed status-all">{{order.get_status_display}}</span>
+                      </h4>
+
+                      <p><strong>Buyurtma sanasi:</strong> <span class="pp-left">{{order.created_at|date:"d-m-Y"}}</span></p>
+                      <p><strong>Kelish sanasi:</strong> <span class="pp-left">
+                        {% if order.status == "P" %}
+                        <span style="color:yellow;">Kutilmoqda</span>
+                        {% elif order.status == "F" %}
+                          <span style="color:red;">Bekor qilingan</span>
+                        {% elif order.status == "S" %}
+                          <span style="color:green;">Yetkazilgan</span>
+                        {% else %}
+                          {{ order.date|date:"d-m-Y" }}
+                        {% endif %}
+                      </span></p>
+                      <p><strong>Ish vaqti</strong></p>
+                      
+                      <ul class="workdays">
+                          <li class="workday"><span>Dushanba</span><span>10:00 - 13:00,14:00 - 17:00</span></li>
+                          <li class="workday"><span>Seyshanba</span><span>10:00 - 13:00,14:00 - 17:00</span></li>
+                          <li class="workday"><span>Chorshanba</span><span>10:00 - 13:00,14:00 - 17:00</span></li>
+                          <li class="workday"><span>Payshanba</span><span>10:00 - 13:00,14:00 - 17:00</span></li>
+                          <li class="workday"><span>Juma</span><span>10:00 - 13:00,14:00 - 17:00</span></li>
+                          <li class="workday"><span>Shanba</span><span>10:00 - 13:00,14:00 - 17:00</span></li>
+                          <li class="workday"><span>Yakshanba</span><span style="color: rgb(255, 174, 0);">dam olish kuni !</span></li>
+                      </ul>
+                      
+                      <p><strong>{{order.items.count}} ta mahsulot</strong> <span class="pp-left"> {{order.get_format_price}} UZS</span></p>
+
+                      <a class="view-products-btn" id="view-products-btn">Mahsulotlarni ko'rish</a>
+                      <div class="products-container" id="products-container">
+                          {% for product in order.items.all %}
+                            <hr>
+                            <div class="product">
+                                <img src="{{product.product.get_banner_image.image.url}}">
+                                <div class="product-info">
+                                    <p>{{product.product.name|slice:":18"}}{% if product.product.name|length > 18  %}...{% endif %}</p>
+                                    <p><strong>Rang:</strong> {{product.color.color.name}}</p>
+                                    <p><strong>Miqdor:</strong> {{product.quantity}} ta</p>
+                                    <p><strong>Narxi:</strong> {{product.product.get_discounted_price}} UZS</p>
+                                </div>
+                            </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+                {% endfor %}
+
+
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock content %}
+{% block js %}
+    <!-- JavaScripts placed at the end of the document so the pages load faster -->
+    <script>
+        // Tablar va kontentlarni olish
+        const tabs = document.querySelectorAll('.my-tab');
+        const contents = document.querySelectorAll('.my-tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function (event) {
+                // Barcha tablardan 'active' klassini olib tashlash
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+
+                // Tanlangan tabni va uning kontentini faollashtirish
+                tab.classList.add('active');
+                document.getElementById(tab.id.replace('-tab', '-content')).classList.add('active');
+            });
+        });
+
+        const buttons = document.querySelectorAll('.view-products-btn');
+
+        buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                const productContainer = button.closest('.order-card').querySelector('.products-container');
+
+                // Mahsulotlar konteynerini ko'rsatish yoki yashirish
+                if (productContainer.style.display === 'none' || productContainer.style.display === '') {
+                    productContainer.style.display = 'block';
+                } else {
+                    productContainer.style.display = 'none';
+                }
+            });
+        });
+
+    </script>
+{% endblock js %}

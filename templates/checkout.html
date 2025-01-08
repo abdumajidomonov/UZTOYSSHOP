@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Rasmiylashtirish{% endblock title %}
+{% block css %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 350px;
+      width: 100%;
+  }
+  </style>
+{% endblock css %}
+{% block content %}
+
+  <!-- ============================================== HEADER : END ============================================== -->
+  <div class="breadcrumb">
+    <div class="container">
+      <div class="breadcrumb-inner">
+        <ul class="list-inline list-unstyled">
+          <li style="display:inline;"><a href="{% url "main:home" %}">Bosh sahifa</a></li>
+          <li style="display:inline;" class='active'>Rasmiylashtirish</li>
+        </ul>
+      </div><!-- /.breadcrumb-inner -->
+    </div><!-- /.container -->
+  </div><!-- /.breadcrumb -->
+
+  <div class="body-content">
+    <div class="container">
+      <div class="checkout-box ">
+        <form action="{% url "cart:creat_order" %}" method="post" class="row">
+          {% csrf_token %}
+          <div class="col-md-8">
+            <div class="panel-group checkout-steps" id="accordion">
+              <!-- checkout-step-01  -->
+              <div class="panel panel-default checkout-step-01">
+
+                <!-- panel-heading -->
+
+                <!-- panel-heading -->
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+
+                  <!-- panel-body  -->
+                  <div class="panel-body active">
+                    <div action="#" class="row">
+                      <h3 class="checkout-h3">Qabul qilish usuli va yetkazib berish manzili:</h3>
+                      <h4 class="checkout-p">Yetkazib berish joyi</h4>
+                      <input id="districts" name="text" class="districts form-control" placeholder="Manzil" style="pointer-events:none;">
+                      <br>
+                      <ul class="user-data-inputs">
+                        <li>
+                          <p class="inp-name">Ism<span>*</span></p>
+                          <input class="userdata-input form-control" value="{% if user.first_name %}{{ user.first_name }}{% endif %}" required="" type="text">
+                        </li>
+                        <li>
+                          <p class="inp-name">Familya<span>*</span></p>
+                          <input class="userdata-input form-control" value="{% if user.last_name %}{{ user.last_name }}{% endif %}" required="" type="text">
+                        </li>
+                        <li>
+                          <p class="inp-name">Telfon raqami<span>*</span></p>
+                          <input type="text" class="userdata-input form-control" value="{% if user.phone_number %}+{{ user.phone_number }}{% endif %}" id="phone" placeholder="+998"
+                          required="" value="+998" style="pointer-events: none;">
+                        </li>
+                        <li>
+                          <!-- change btn mazil  -->
+                          <p class="inp-name">Manzili<span>*</span></p>
+                          <button type="button" onclick="openModal()" class="btn-manzil btn btn-primary "
+                            style="width: 100%;border-radius: 5px;">
+                            Manzil kiritish
+                          </button>
+                          <!-- change btn mazil  end -->
+                          <!-- modal  -->
+                          <div class="checkout-modal" id="myModal" onclick="closeModal(event)">
+                            <div class="checkout-modal-content" onclick="event.stopPropagation()">
+                              <button class="checkout-close-btn" type="button" onclick="closeModal()">×</button>
+                              <h3 class="checkout-h3">Manzilni Kiriting</h3><br>
+                              <div id="map"></div><br>
+                              <div id="location-form">
+                                <input type="hidden" id="latitude" name="latitude" required  placeholder="Kenglik">
+                                <input type="hidden" id="longitude" name="longitude" required placeholder="Uzunlik">
+                                <button type="button" onclick="closeModal()" class="btn btn-info " style="width: 100%;">Saqlash</button>
+                              </div>
+
+                              <!-- <a href="ehamle.com" class="checkout-p" style="text-decoration: underline;">havolaga
+                                o'tish </a> -->
+                            </div>
+                          </div>
+
+                        </li>
+                      </ul>
+
+
+                    </div>
+                  </div>
+                  <!-- panel-body  -->
+
+                </div><!-- row -->
+              </div>
+              <!-- checkout-step-01  -->
+              <!-- checkout-step-02  -->
+              <div class="panel panel-default checkout-step-02">
+                <h3 class="checkout-h3">{{cart_items.count}}ta mahsulot<a onclick="SeeAllProduct()" class="product-float-left" style="text-decoration: underline;cursor: pointer;float:right;">Mahsulotlarni Ko'rish </a></h3><br class="resposnsivebr">
+                <div class="tab-pane active seeallproduct seeallproduct-dn" id="grid-container"><br>
+                  <div class="category-product">
+                    <div class="row">
+                    {% for item in cart_items %}
+                      <div class="col-sm-4 col-md-4 wow fadeInUp">
+                        <div class="products">
+                          <div class="product">
+                            <div class="product-image">
+                              <input type="hidden" name="product_id" value="{{item.product.id}}">
+                              <input type="hidden" name="product_quantity" value="{{item.quantity}}">
+                              <input type="hidden" name="product_color" value="{{item.color.id}}">
+                              <input type="hidden" name="total_price" value="{{total_price}}">
+                              <div class="image"><a href="#"><img src="{{ item.product.get_banner_image.image.url }}" style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 100%; object-fit: cover;" alt=""></a> </div>
+                              <!-- /.image -->
+
+                            </div>
+                            <!-- /.product-image -->
+
+                            <div class="product-info text-left">
+                              <h3 class="name"><a href="#">{{item.product.name|slice:":18"}}{% if item.product.name|length > 18  %}...{% endif %}</a></h3>
+                              
+                              <div class="h5">Rangi: {{item.color.color.name}}</div>
+                              <div class="h5">Miqdori: {{item.quantity}} ta</div>
+                              <div class="product-price"> <span class="price">{{ item.product.get_discounted_price }} so'm </span> {% if item.product.discount %}<span class="price-before-discount">{{item.product.get_format_price}}</span>{% endif %} </div>
+                              <!-- /.product-price -->
+
+                            </div>
+                            <!-- /.product-info -->
+
+                            <!-- /.cart -->
+                          </div>
+                          <!-- /.product -->
+
+                        </div>
+                        <!-- /.products -->
+                      </div>
+                    {% endfor %}
+                    </div>
+                    <!-- /.row -->
+                  </div>
+                  <!-- /.category-product -->
+
+                </div>
+                <!-- /.tab-pane -->
+              </div>
+              <!-- checkout-step-02  -->
+
+            </div><!-- /.checkout-steps -->
+          </div>
+          <div class="col-md-4" style="position: sticky; top: 10px;">
+            <!-- checkout-progress-sidebar -->
+            <div class="checkout-progress-sidebar ">
+              <div class="panel-group">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="unicase-checkout-title">Toʻlov jarayoni</h4>
+                    <h4 class="unicase-checkout-title ikkicheka">
+                      <div>Umumiy to'lov hajmi</div>
+                      <div>{{total_price}} so'm</div>
+                    </h4>
+                    <h4 class="unicase-checkout-title ikkicheka">
+                      <div>Tahminiy Yetkazish mudati</div>
+                      <div id="nextWeekDate">13.06.2025</div>
+                    </h4>
+
+                  </div>
+                  <div class="">
+                    <ul class="nav nav-checkout-progress list-unstyled">
+                      <li><p href="#" class="chekout-a"><input type="radio" checked class="tolov-usuli"
+                            name="payment_method" value="cash">Naqt pulda to'lash</p></li>
+                      <li><p href="#" class="chekout-a"><input type="radio" class="tolov-usuli" name="payment_method"
+                      value="card"><img class="tolov-icon" src="{% static "images/payme-11.png" %}" alt=""> da to'lash</p></li>
+                    </ul><br>
+                    <button type="submit" class="btn-manzil btn btn-primary " style="width: 100%;border-radius: 5px;">
+                      To'lovga o'ting
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- checkout-progress-sidebar -->
+          </div>
+        </form><!-- /.row -->
+      </div><!-- /.checkout-box -->
+    </div><!-- /.container -->
+  </div><!-- /.body-content -->
+{% endblock content %}
+{% block js %}
+  <!-- JavaScripts placed at the end of the document so the pages load faster -->
+  <script>
+    // Modalni ochish
+    const today = new Date();
+
+    // Bir hafta qo'shish
+    const nextWeek = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
+  
+    // Oylar ro'yxati
+    const monthNames = [
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+        "Iyul", "Avgust", "Sentyabr", "Oktabr", "Noyabr", "Dekabr"
+    ];
+  
+    // Formatlash
+    const formattedDate = `${nextWeek.getDate()}-${monthNames[nextWeek.getMonth()]}`;
+  
+    // Barcha `id="nextWeekDate"` elementlarini olish
+    const dateElements = document.querySelectorAll('#nextWeekDate');
+  
+    // Har bir element uchun textni o'rnatish
+    dateElements.forEach(element => {
+        element.textContent = formattedDate;
+    });
+    function openModal() {
+      document.getElementById('myModal').style.display = 'flex';
+    }
+    // Modalni yopish
+    function closeModal(event) {
+      const modal = document.getElementById('myModal');
+      if (!event || event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+  <script>
+    // Haversine formulasi orqali masofa hisoblash
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Yer radiusi, km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c; // Masofa, km
+    }
+
+    // Haritani boshlang‘ich koordinatasiz yaratish
+    var map = L.map('map');
+
+    // Foydalanuvchi koordinatalarini olish
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          var userLat = position.coords.latitude;
+          var userLng = position.coords.longitude;
+
+          console.log("User Latitude: " + userLat);
+          console.log("User Longitude: " + userLng);
+          
+          // Andijon koordinatalari
+          var andijanLat = 40.7821;
+          var andijanLng = 72.3442;
+
+          // Masofani hisoblash
+          var distance = calculateDistance(userLat, userLng, andijanLat, andijanLng);
+          console.log("Masofa: " + distance + " km");
+
+          // Foydalanuvchi Andijonda bo‘lmasa, markazni Andijonga sozlash
+          if (distance > 10) {
+            console.log("Foydalanuvchi Andijon hududida emas. Xarita Andijonga qayta sozlanmoqda.");
+            userLat = andijanLat;
+            userLng = andijanLng;
+          }
+
+          // Haritani markazlash
+          map.setView([userLat, userLng], 13);
+
+          // Marker qo‘shish
+          var marker = L.marker([userLat, userLng]).addTo(map);
+          document.getElementById('latitude').value = userLat;
+          document.getElementById('longitude').value = userLng;
+          
+          // Xaritada bosilgan joy uchun marker o‘rnatish
+          map.on('click', function (e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            console.log("Clicked Latitude: " + lat);
+            console.log("Clicked Longitude: " + lng);
+
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+            .then(response => response.json())
+            .then(data => {
+              var address = data.address;
+              var street = address.road || "Ko'cha nomi topilmadi";
+              document.querySelector('#districts').value = street
+              console.log("Ko'cha nomi: " + street);
+            });
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map);
+          });
+        },
+        function (error) {
+          alert('Joylashuvni aniqlab bo‘lmadi. Iltimos, ruxsat bering.');
+          // Standart joyni o‘rnatish (Andijon)
+          map.setView([40.7821, 72.3442], 13);
+        }
+      );
+    } else {
+      alert('Joylashuvni aniqlash sizning qurilmangizda mavjud emas.');
+      // Standart joyni o‘rnatish (Andijon)
+      map.setView([40.7821, 72.3442], 13);
+    }
+
+    // Xaritaga tile-layer qo'shish
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+  </script>
+  {% endblock js %}

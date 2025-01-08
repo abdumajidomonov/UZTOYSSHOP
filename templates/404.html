@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <!-- ============================================== HEADER : END ============================================== -->
+  <div class="body-content outer-top-bd">
+    <div class="container">
+      <div class="x-page inner-bottom-sm">
+        <div class="row">
+          <div class="col-md-12 x-text text-center">
+            <h1>404</h1>
+            <p>Bunday sahifa mavjud emas </p>
+            <form action='{% url "main:product_list" %}' role="form" method='get' class="outer-top-vs outer-bottom-xs">
+              <input placeholder="Search" autocomplete="off" name='q'>
+              <button class="btn-default le-button"><i class="fas fa-search"></i></button>
+            </form>
+            <a href="{% url "main:home" %}"><i class="fa fa-home"></i>Bosh sahifaga qaytish</a>
+          </div>
+        </div><!-- /.row -->
+      </div><!-- /.sigin-in-->
+    </div><!-- /.container -->
+  </div><!-- /.body-content -->
+  {% endblock content %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Tez-tez beriladigan savollar{% endblock title %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-inner">
+      <ul class="list-inline list-unstyled" style="align-items: center;">
+        <li style="display: inline;"><a href="{% url "main:home" %}">Bosh sahifa</a></li>
+        <li style="display: inline;" class='active'>Tez tez so'raladigan savollar</li>
+      </ul>
+
+    </div>
+    <!-- /.breadcrumb-inner -->
+  </div>
+  <!-- /.container -->
+</div><!-- /.breadcrumb -->
+<div class="body-content">
+  <div class="container">
+      <div class="checkout-box faq-page">
+          <div class="row">
+              <div class="col-md-12">
+                  <h2 class="heading-title">Tez-tez beriladigan savollar (FAQ)</h2>
+                  <span class="title-tag">Last Updated on November 02, 2014</span>
+                  <div class="panel-group checkout-steps" id="accordion">
+                      {% for faq in faqs %}
+                      <div class="panel panel-default">
+                          <div class="panel-heading">
+                              <h4 class="unicase-checkout-title">
+                                  <a data-toggle="collapse" class="" data-parent="#accordion" href="#collapse{{ forloop.counter }}">
+                                      <span>{{ forloop.counter }}</span>{{ faq.question }}
+                                  </a>
+                              </h4>
+                          </div>
+                          <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse in">
+                              <div class="panel-body">
+                                  {{ faq.answer }}
+                              </div>
+                          </div>
+                      </div>
+                      {% endfor %}
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div><!-- /.body-content -->
+  {% endblock content %}
+ {% block js %}
+  <script src="switchstylesheet/switchstylesheet.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $(".changecolor").switchstylesheet({ seperator: "color" });
+      $('.show-theme-options').click(function () {
+        $(this).parent().toggleClass('open');
+        return false;
+      });
+    });
+
+    $(window).bind("load", function () {
+      $('.show-theme-options').delay(2000).trigger('click');
+    });
+  </script>
+  <!-- For demo purposes – can be removed on production : End -->
+{% endblock js %}

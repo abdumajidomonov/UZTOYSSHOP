@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Istaklar Ro'yxati{% endblock title %}
+
+{% block content %}
+
+  <!-- ============================================== HEADER : END ============================================== -->
+  <div class="breadcrumb">
+    <div class="container">
+      <div class="breadcrumb-inner">
+        <ul class="list-inline list-unstyled" style="align-items: center;">
+          <li style="display: inline;"><a href="{% url "main:home" %}">Bosh sahifa</a></li>
+          <li class='active' style="display: inline;">Istaklar Ro'yxati</li>
+          
+        </ul>
+
+      </div>
+      <!-- /.breadcrumb-inner -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.breadcrumb -->
+  <div class="body-content outer-top-xs">
+    <div class='container'>
+      <h3 class="h3">Istaklar Ro'yxati</h3>
+      <div class='row favorites_list'>
+
+        <!-- /.sidebar -->
+        {% if page_obj %}
+        <div class='col-md-12'>
+
+          <!-- ========================================== SECTION – HERO ========================================= -->
+          <div class="search-result-container ">
+            <div id="myTabContent" class="tab-content category-list">
+              <div class="tab-pane active " id="grid-container">
+                <div class="category-product">
+                  <div class="row">
+                    {% for product in page_obj %}
+                    <div class="col-sm-3 col-md-3 wow fadeInUp product-{{product.id}}">
+                      <div class="products">
+                        <div class="product">
+                          <div class="product-image">
+                            <div class="image"> <a href="{% url "main:product_detail" product_id=product.id %}"><img src="{{product.get_banner_image.image.url}}" style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 100%; object-fit: cover;" alt=""></a>
+                            </div>
+                            <!-- /.image -->
+                            {% if product.discount %}
+                            <div class="tag hot"><span>{{product.discount}}%</span></div>
+                            {% else %}
+                            <div class="tag new"><span>Yangi</span></div>
+                            {% endif %}
+                          </div>
+                          <!-- /.product-image -->
+              
+                          <div class="product-info text-left">
+                            <h3 class="name"><a href="{% url "main:product_detail" product_id=product.id %}">{{product.name|slice:":25"}}{% if product.name|length > 25  %}...{% endif %}</a></h3>
+                            <ul class="stars">
+                            {% for i in "12345" %}
+                              {% if forloop.counter <= product.get_average_rating %}
+                                <li><i class="fa-solid fa-star" style="color:gold;font-size: 13px;"></i></li> <!-- Yulduz -->
+                              {% else %}
+                                <li><i class="fa-solid fa-star" style="color: grey;font-size: 13px;"></i></li> <!-- Bo'sh yulduz -->
+                              {% endif %}
+                            {% endfor %}
+                            <ul>
+                            <div class="description"></div>
+                            <div class="product-price"> <span class="price"> {{ product.get_discounted_price }} so'm </span> 
+                          {% if product.discount %}<span class="price-before-discount">{{ product.get_format_price }} so'm</span>{% endif %} </div>
+                            <!-- /.product-price -->
+                            {% for color in product.colors.all %}
+                            {% if not color.stock_quantity == 0 %}
+                                <input type="hidden" name="color" class="myCheckbox{{product.id}}" value="{{color.id}}">
+                            {% endif %}
+                            {% endfor %}
+                          </div>
+                          <!-- /.product-info -->
+                          <div class="cart clearfix animate-effect" style="width: 100%;left: 58%;">
+                            <div class="action">
+                            <ul class="list-unstyled">
+                              <li class="add-cart-button btn-group">
+                              <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" data-toggle="tooltip" class="btn btn-primary icon" type="button" title="savatga">
+                                <i class="fa fa-shopping-cart"></i> </button>
+                              <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" class="btn btn-primary cart-btn" type="button">Savatga</button>
+                              </li>
+                              <li class="lnk wishlist bg-primary select" onclick="toggleWishlist(this);toggleFavorite({{product.id}});RemoveFavorite({{product.id}})">
+                              <i class="icon fa fa-heart"></i>
+                              </li>
+              
+                            </ul>
+                            </div>
+                            <!-- /.action -->
+                          </div>
+                          <!-- /.cart -->
+                        </div>
+                        <!-- /.product -->
+
+                      </div>
+                      <!-- /.products -->
+                    </div>
+                    {% endfor %}
+                    <!-- /.item -->
+                  </div>
+                  <!-- /.row -->
+                </div>
+                <!-- /.category-product -->
+
+              </div>
+              <!-- /.tab-pane -->
+
+              <!-- /.tab-pane #list-container -->
+            </div>
+            <!-- /.tab-content -->
+            <div class="clearfix filters-container">
+              <div class="text-right">
+                  <div class="pagination-container">
+                      <ul class="list-inline list-unstyled">
+                          {% if page_obj.has_previous %}
+                              <li class="prev">
+                                  <a href="?page={{ page_obj.previous_page_number }}">
+                                      <i class="fa fa-angle-left"></i>
+                                  </a>
+                              </li>
+                          {% else %}
+                              <li class="prev disabled">
+                                  <a href="#">
+                                      <i class="fa fa-angle-left"></i>
+                                  </a>
+                              </li>
+                          {% endif %}
+          
+                          <!-- Page number links -->
+                          {% for num in page_obj.paginator.page_range %}
+                              {% if num == page_obj.number %}
+                                  <li class="active"><a href="#">{{ num }}</a></li>
+                              {% else %}
+                                  <li><a href="?page={{ num }}">{{ num }}</a></li>
+                              {% endif %}
+                          {% endfor %}
+          
+                          {% if page_obj.has_next %}
+                              <li class="next">
+                                  <a href="?page={{ page_obj.next_page_number }}">
+                                      <i class="fa fa-angle-right"></i>
+                                  </a>
+                              </li>
+                          {% else %}
+                              <li class="next disabled">
+                                  <a href="#">
+                                      <i class="fa fa-angle-right"></i>
+                                  </a>
+                              </li>
+                          {% endif %}
+                      </ul>
+                  </div>
+              </div>
+          </div>
+          
+            <!-- /.filters-container -->
+
+          </div>
+          <!-- /.search-result-container -->
+
+        </div>
+        {% else %}
+        <div class="notfounscard-content">
+          <img src="{% static 'images/Product Not Found.png' %}" class="notfounscard" alt="Product Not Found">
+          <h3 class="h3" style="font-weight: bold; color: #333;">Istaklar Ro'yxati Bo'sh</h3>
+          <p class="h5" style="font-size: 18px; color: #555;">Sevimli mahsulotlaringiz hozircha yo'q. <br> Yangi mahsulotlar qo'shish uchun tugmani bosing!</p>
+          <a href="{% url 'main:product_list' %}" class="btn btn-primary" style="font-weight: bold; padding: 10px 20px; border-radius: 5px;">
+              Yangi Mahsulotlar Qo'shish
+          </a>
+          <br>
+          <br>
+          <br>
+          <br>
+      </div>
+      
+        {% endif %}
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+      <!-- ============================================== BRANDS CAROUSEL ============================================== -->
+
+      <!-- /.logo-slider -->
+      <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+    </div>
+    <!-- /.container -->
+
+  </div>
+  <!-- /.body-content -->
+
+{% endblock content %}
+{% block js %}
+<script>
+  function RemoveFavorite(productId){
+    document.querySelector(`.product-${productId}`).remove();
+    const divExists = document.querySelector('.products') !== null;
+    console.log(divExists)
+    if (!divExists) {
+      document.querySelector('.favorites_list').innerHTML = `       <div class="notfounscard-content">
+        <img src="{% static 'images/Product Not Found.png' %}" class="notfounscard" alt="Product Not Found">
+        <h3 class="h3" style="font-weight: bold; color: #333;">Istaklar Ro'yxati Bo'sh</h3>
+        <p class="h5" style="font-size: 18px; color: #555;">Sevimli mahsulotlaringiz hozircha yo'q. <br> Yangi mahsulotlar qo'shish uchun tugmani bosing!</p>
+        <a href="{% url 'main:product_list' %}" class="btn btn-primary" style="font-weight: bold; padding: 10px 20px; border-radius: 5px;">
+            Yangi Mahsulotlar Qo'shish
+        </a>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    `
+    }
+  }
+</script>
+{% endblock js %}

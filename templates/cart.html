@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+{% block title %}Savatcha{% endblock title %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/cartstyle.css' %}">
+{% endblock css %}
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-inner">
+      <ul class="list-inline list-unstyled">
+        <li style="display:inline;"><a href="{% url "main:home" %}">Bosh sahifa</a></li>
+        <li class='active' style="display:inline;">Savatcha</li>
+      </ul>
+    </div><!-- /.breadcrumb-inner -->
+  </div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+<main>
+  <div class="container">
+    {% if cart_items %}
+    <h3 class="card-h3">Savatingiz, <span style="color:gray;">{{cart_items.count}} ta mahsulot</span></h3>
+    <form action="{% url "cart:checkout" %}" method="post" class="section-cart">
+      {% csrf_token %}
+      <div class="allcart-left">
+        <ul class="cart-top cart-top-db">
+          <li>
+            <div class="carth4"><input type="checkbox" checked class="allcart-checked"> Hammasini Tanlash</div>
+          </li>
+          <li class="delivery-date-date">
+            <div class="carth5"><span style="color:gray;">Yetkazib berishning eng yaqin sanasi <span
+                  class="delivery-date" id="nextWeekDate"></span></span></div>
+          </li>
+        </ul>
+        <hr style="margin: 2% 0;">
+        {% if cart_items %}
+        <div class="allcart">
+          {% for item in cart_items %}
+          <div class="cart-product" id="cart-item-{{item.id}}">
+            <div class="big-delivery" style="position: relative;width: 100%;"><span id="nextWeekDate">27-dekabrdan</span> boshlab yetkazamiz <button class="btn  text-danger delete-btn-response" style="background: transparent;position: absolute;right: -5px;padding: 0;top: 0;color: red;"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="cart-product-content" style="position: relative;">
+              <div class="left-img-chek">
+                {% if not item.color.stock_quantity == 0 %}<input type="checkbox" checked class="cart-product-check" name="product" value="{{item.id}}" >{% endif %}
+                <div>
+                  <a href="{% url "main:product_detail" product_id=item.product.id %}">
+                    <img class="cart-product-content-img" src="{{ item.product.get_banner_image.image.url }}" alt="">
+                  </a>
+                  <div class="custom-number-input inp-respons-db responsev-position">
+                    <button class="custom-button decrease" type="button">-</button>
+                    <input class="custom-input" type="number" value="1" min="1">
+                    <button class="custom-button increase" type="button">+</button>
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="right-text">
+                <ul class="cart-product-text">
+                  <li class="cart-product-name">
+
+                    {{item.product.name}}
+                  </li>
+                  <li class="inp-respons-dn">
+                    <button class="btn btn-secondary" type="button" onclick="removeFromCart({{item.id}})"><i class="fa-solid fa-trash"></i> O'chirish</button>
+                  </li>
+                </ul>
+                <ul class="cart-product-text">
+                  <li class="cart-product-name">
+                    <div class="carth5"><span style="color: gray;">Sotuvchi:</span> {{item.product.seller}}</div>
+                    <div class="carth5"><span style="color: gray;">Tur:</span> {{ item.product.category.first.name}}</div>
+                    <div class="carth5"><span style="color: gray;">Rang:</span> {{ item.color.color.name }}</div>
+                  </li>
+                  <li>
+                    <!-- Bu kabi ko'plab inputlar bo'lishi mumkin -->
+                    <div class="custom-number-input inp-respons-dn">
+                      <button class="custom-button decrease" onclick="decreaseValue({{item.id}});updateCartItemQuantity({{item.id}})" type="button">-</button>
+                      <input class="custom-input" value="{{ item.quantity }}" oninput="document.querySelectorAll('#quantity-input-{{item.id}}')[0].value = this.value" onchange="updateCartItemQuantity({{item.id}});" id="quantity-input-{{item.id}}" type="number" min="1">
+                      <button class="custom-button increase" onclick="increaseValue({{item.id}});updateCartItemQuantity({{item.id}})" type="button">+</button>
+                    </div>
+                  </li>
+                  <li class="product-price">
+                    <div class="carth3" style="text-align: end;">{{ item.product.get_discounted_price }} so'm <br>
+                      {% if item.product.discount %}
+                      <h4 class="cardh4" style="text-decoration-line: line-through;color: gray;"> {{item.product.get_format_price}} so'm</h4>
+                      {% endif %}
+                      <button type="button" class="btn btn-secondary inp-respons-db responsbtndn" style="float: right;"><i
+                          class="fa-solid fa-trash" onclick="removeFromCart({{item.id}})"></i> O'chirish</button>
+
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        
+      </div>
+      <div class="checkout-right">
+        <h4 class="order-text">Buyurtmangiz</h4>
+        <ul class="cart-top">
+          <li>
+            <div class="carth5">Mahsulotlar (<span id="total_quantity">{{total_quantity}}</span>):</div>
+          </li>
+          <li>
+            <div class="carth5"><span id="second_total_price">{{second_total_price}}</span> so'm</div>
+          </li>
+        </ul><br>
+        <span style="width: 100%;display: block;" class="delivery-date cardh5">Yetkazib berish <span id="nextWeekDate">28-Dekabr</span></span><br>
+        {% if saving_money %}
+        
+        <ul class="cart-top cart-with-discount" style="align-items: start;">
+          <li>
+            <div class="carth5">Jami:</div>
+          </li>
+          <li>
+            <div class="carth3" style="text-align: end;" ><span id="total_price">{{total_price}}</span>  so'm <br><span class="carth4"
+                style="color: #00ad3a;">Tejovingiz: <span id="saving_money">{{saving_money}}</span> so'm</span></div>
+
+          </li>
+        </ul>{% endif %}
+        <br>
+
+        <button type="submit" class="btn btn-info checkout-right-btn">Rasmiylashtirishga
+            o'tish</button>
+      </div>
+    </form>
+    {% endif %}
+    <div class="notfounscard-content" {% if cart_items %}style="display:none"{% endif %}>
+      <img src="{% static "images/Product Not Found.png" %}" class="notfounscard" alt="">
+      <h3 class="h3">Savatda Mahsulot Yo'q</h3>
+      <p class="h5">Mahsulotlarni ko'rib chiqing <br> va savatingizni to'ldiring.</p>
+      <a href="{% url "main:product_list" %}" class="btn btn-primary">Mahsulotlarni Ko'rish</a>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+    </div>
+  </div>
+</main>
+{% endblock content %}
+{% block js %}
+<script>
+  function updateCartItemQuantity(cartItemId) {
+    const quantityInput = document.getElementById(`quantity-input-${cartItemId}`);
+    const newQuantity = quantityInput.value;  // Yangilangan miqdorni olish
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  
+    fetch('/cart/update-cart-item/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken  // CSRF tokenini olish funksiyasi kerak bo'ladi
+        },
+        body: JSON.stringify({
+            'cart_item_id': cartItemId,
+            'quantity': newQuantity,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+          document.getElementById("total_price").innerText = `${data.total_price}`
+          document.getElementById("total_quantity").innerText = `${data.total_quantity}`
+          if(document.querySelector('#second_total_price')){
+              document.querySelector('#second_total_price').innerText = data.second_total_price
+          }
+          if(document.querySelector('#saving_money')){
+              document.querySelector('#saving_money').innerHTML = data.savin_money
+          }
+        }
+        else {
+          showMessage(data.message);
+          if(data.message.includes("Mahsulot bazada yetarlik emas. Hozirda")){
+            updateCartItemQuantity(cartItemId)
+            const inputElements = document.querySelectorAll(`#quantity-input-${cartItemId}`);
+            console.log(inputElements[1].value)
+            inputElements[1].value = parseInt(data.message.replace(/\D/g, ''))
+            quantityInput.value = parseInt(data.message.replace(/\D/g, ''))
+          }
+        }
+    })
+    .catch(error => console.error('Xatolik yuz berdi:', error));
+  }
+  function removeFromCart(cartItemId) {
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    fetch('/cart/remove-to-cart/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken // CSRF tokenni olish funksiyasi kerak bo'ladi
+        },
+        body: JSON.stringify({
+            'cart_item_id': cartItemId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            showMessage(data.message)
+            document.getElementById(`cart-item-${cartItemId}`).remove();
+            document.getElementById("total_price").innerText = `${data.total_price} so'm`
+            document.getElementById("total_quantity").innerText = `${data.total_quantity}`
+            const divExists = document.querySelector('.cart-product') !== null;
+            if (!divExists) {
+              document.querySelector('.section-cart').style.display = "none"
+              document.querySelector('.card-h3').style.display = "none"
+              document.querySelector('.notfounscard-content').style.display = "block"
+          }
+            if(document.querySelector('#second_total_price')){
+                document.querySelector('#second_total_price').innerText = data.second_total_price
+            }
+            if(document.querySelector('#saving_money')){
+                document.querySelector('#saving_money').innerHTML = data.savin_money
+            }
+        }
+    })
+    .catch(error => console.error('Xatolik yuz berdi:', error));
+  }
+</script>
+<script>
+  // Barcha inputlar va ularning tegishli tugmalari uchun event listener qo'shish
+// "-" tugmasi uchun funksiyani yaratish
+      function decreaseValue(id) {
+        const input = document.getElementById(`quantity-input-${id}`); // Input elementini olish
+        const inputElements = document.querySelectorAll(`#quantity-input-${id}`);
+        let currentValue = parseInt(input.value);
+        if (currentValue > 1) { // Minimal qiymatni tekshirish
+          inputElements.forEach((inputElement) => {
+            // Har bir input elementning qiymatini o'zgartirish
+            inputElement.value = currentValue - 1;  // newValue o'zgartirilgan qiymat
+        });
+        }
+      }
+
+      // "+" tugmasi uchun funksiyani yaratish
+      function increaseValue(id) {
+        const input = document.getElementById(`quantity-input-${id}`); // Input elementini olish
+        const inputElements = document.querySelectorAll(`#quantity-input-${id}`);
+        let currentValue = parseInt(input.value);
+        inputElements.forEach((inputElement) => {
+          // Har bir input elementning qiymatini o'zgartirish
+          inputElement.value = currentValue + 1;  // newValue o'zgartirilgan qiymat
+        })
+
+      }
+
+      // Foydalanuvchi qo'lda qiymat kiritganda minimal qiymatni tekshirish
+      function checkInput(event) {
+        const input = event.target;
+        input_id = input.getAttribute('id')
+        const inputElements = document.querySelectorAll('#'+input_id);
+        if (input.value < 1) {
+          inputElements[1].value = 1
+          inputElements[0].value = 1
+        }
+      }
+
+      // Har bir input uchun event listenerni qo'yish
+      const numberInputs = document.querySelectorAll('.custom-input');
+      numberInputs.forEach(input => {
+        input.addEventListener('input', checkInput);
+      });
+
+
+  // Hammasini belgilash yoki bekor qilish uchun asosiy checkbox
+  const allCartCheckbox = document.querySelector('.allcart-checked');
+  // Mahsulotlar uchun barcha checkboxlar
+  const productCheckboxes = document.querySelectorAll('.cart-product-check');
+
+  // Asosiy checkbox holatini kuzatish
+  allCartCheckbox.addEventListener('change', () => {
+    const isChecked = allCartCheckbox.checked; // Asosiy checkbox holati
+    productCheckboxes.forEach(checkbox => {
+      checkbox.checked = isChecked; // Barcha mahsulotlarni asosiy holatga o'rnatish
+    });
+  });
+
+  // Qo'shimcha: Agar mahsulot checkboxlardan biri belgilansa yoki bekor qilinsa, asosiy checkboxni boshqarish
+  productCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      const allChecked = Array.from(productCheckboxes).every(cb => cb.checked);
+      allCartCheckbox.checked = allChecked; // Agar hammasi belgilangan bo'lsa, asosiy checkboxni belgilang
+    });
+  });
+  
+  const today = new Date();
+
+  // Bir hafta qo'shish
+  const nextWeek = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+  // Oylar ro'yxati
+  const monthNames = [
+      "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+      "Iyul", "Avgust", "Sentyabr", "Oktabr", "Noyabr", "Dekabr"
+  ];
+
+  // Formatlash
+  const formattedDate = `${nextWeek.getDate()}-${monthNames[nextWeek.getMonth()]}`;
+
+  // Barcha `id="nextWeekDate"` elementlarini olish
+  const dateElements = document.querySelectorAll('#nextWeekDate');
+
+  // Har bir element uchun textni o'rnatish
+  dateElements.forEach(element => {
+      element.textContent = formattedDate;
+  });
+</script>
+{% endblock js %}

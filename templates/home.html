@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Bosh Sahifa{% endblock title %}
+{% block content %}
+  <!-- ============================================== HEADER : END ============================================== -->
+  <div class="body-content" id="top-banner-and-menu">
+    <div id="hero">
+
+      <div id="owl-main" class="owl-carousel owl-inner-nav owl-ui-sm">
+        {% for banner in banners|slice:":4" %}
+        <a href="{{ banner.banner_link }}">
+        <div  class="item" style="background-image: url({{banner.image.url}});">
+          <div class="container">
+            <div class="caption bg-color vertical-center text-left">
+              
+            </div>
+            <!-- /.caption -->
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        </a>
+        {% endfor %}
+
+        <!-- /.item -->
+
+
+      </div>
+      <!-- /.owl-carousel -->
+      <!-- /.owl-carousel -->
+    </div>
+    <div class="container home-banner1 respons-none" id="aa">
+      <div class="row row-bottom">
+        <div class="col-sm-4 col-xs-12 col-md-4">
+          <a class="btn btn-call btn-bottom" href="tel:0800 622 6225">Bizga bog'laning</a>
+        </div>
+        <div class="col-sm-4 col-xs-12 col-md-4">
+          <a class="btn btn-email btn-bottom" href="https://www.instagram.com/uztoysshop">Instagram</a>
+        </div>
+        <div class="col-sm-4 col-xs-12 col-md-4">
+          <a class="btn btn-chat btn-bottom" href="https://t.me/UzToysShop1">Telegram</a>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="container">
+    
+<div id="brands-carousel" class="logo-slider wow fadeInUp">
+  <div class="logo-slider-inner" style="opacity: 1 !important;">
+    <div id="brand-slider" class="owl-carousel brand-slider custom-carousel owl-theme" >
+      {% for category in categories %}
+
+      <div class="item m-t-15  category-sort-width-img" > <a href="{% url "main:product_list" %}?category={{category.name}}" class="image"> <img style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 110px; object-fit: cover;"
+        src="{{category.image.url}}" alt=""><br>
+        <p class="h4 ">{{category.name}}</p>
+      </a> </div>
+      {% endfor %}
+      <!--/.item-->
+
+    </div>
+    <!-- /.owl-carousel #logo-slider -->
+  </div>
+  <!-- /.logo-slider-inner -->
+
+</div>
+<!-- /.logo-slider -->
+<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->
+
+      <div class="row">
+        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+          <!-- ============================================== HOT DEALS ============================================== -->
+          <div class="sidebar-widget hot-deals wow outer-bottom-xs">
+            <h3 class="section-title">Qaynoq takliflar</h3>
+            <div class="owl-carousel sidebar-carousel custom-carousel owl-theme outer-top-ss">
+              {% for product in products %}
+                <div class="item">
+                  <div class="products">
+                    <div class="hot-deal-wrapper">
+                      <div class="image">
+                        <img src="{{product.get_banner_image.image.url}}" style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 100%; object-fit: cover;" alt="{{ product.name }}" />
+                      </div>
+                      {% if product.discount %}
+                      <div class="sale-offer-tag">
+                        <span>{{ product.discount }}%<br>off</span>
+                      </div>
+                      {% endif %}
+                    </div>
+                    <!-- /.hot-deal-wrapper -->
+
+                    <div class="product-info text-left m-t-20">
+                      <h3 class="name">
+                        <a href="{% url "main:product_detail" product_id=product.id %}">{{product.name|slice:":25"}}{% if product.name|length > 25  %}...{% endif %}</a>
+                      </h3>
+                      <ul class="stars">
+                      {% for i in "12345" %}
+                        {% if forloop.counter <= product.get_average_rating %}
+                            <li><i class="fa-solid fa-star" style="color:gold"></i></li> <!-- Yulduz -->
+                        {% else %}
+                            <li><i class="fa-solid fa-star" style="color: grey;"></i></li> <!-- Bo'sh yulduz -->
+                        {% endif %}
+                      {% endfor %}
+                      <ul>
+                      <div class="product-price">
+                        <span class="price"> {{ product.get_discounted_price }}so'm </span>
+                        {% if product.discount %}
+                        <span class="price-before-discount">{{ product.get_format_price }}so'm</span>
+                        {% endif %}
+                      </div>
+                      <!-- /.product-price -->
+                    </div>
+                    <!-- /.product-info -->
+                    {% for color in product.colors.all %}
+                      {% if not color.stock_quantity == 0 %}
+                            <input type="hidden" name="color" class="myCheckbox{{product.id}}" value="{{color.id}}">
+                      {% endif %}
+                    {% endfor %}
+                    <div class="cart clearfix animate-effect">
+                      <div class="action">
+                        <div class="add-cart-button btn-group">
+                          <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" class="btn btn-primary icon" data-toggle="dropdown" type="button">
+                            <i class="fa fa-shopping-cart"></i>
+                          </button>
+                          <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" class="btn btn-primary cart-btn" type="button">Savatga</button>
+                        </div>
+                      </div>
+                      <!-- /.action -->
+                    </div>
+                    <!-- /.cart -->
+                  </div>
+                </div>
+              {% endfor %}
+              
+            </div>
+            <!-- /.sidebar-widget -->
+          </div>
+          <!-- ============================================== HOT DEALS: END ============================================== -->
+        </div>
+        <div class="col-lg-7 col-md-67 col-sm-7 col-xs-12">
+          <div class="box1 box-category box-category-wide">
+            <div class="full-link box-category-image transition" id="season-container"></div>
+            <div class="full-link1">
+              <h3 style="text-shadow: 0 0 1px black;"><span id="season"></span>gi Savdo</h3>
+              <a href="{% url "main:product_list" %}?category={{season_category}}" class="btn-link1">Xaridni boshlash</a>
+
+            </div>
+          </div>
+          <div class="row">
+            {% for product in season_products %}
+            <div class="col col-sm-6">
+              <div class="box1 box-category">
+                <div class="full-link box-category-image transition"
+                  style="background-image:url({{product.get_banner_image.image.url}});"></div>
+                <a href="{% url "main:product_detail" product_id=product.id %}" class="full-link">
+                <span class="btn btn-default">Sotib Olish</span></a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== INFO BOXES ============================================== -->
+      <div class="info-boxes wow fadeInUp">
+        <div class="info-boxes-inner">
+          <div class="row">
+            <div class="header-benefit">
+              <div class="benefit-icon"><i class="fa fa-credit-card"></i></div>
+              <h4 class="info-box-heading green">30 kunlik pulni qaytarish kafolati</h4>
+            </div>
+
+
+            <!-- .col -->
+
+            <div class="header-benefit">
+              <div class="benefit-icon"><i class="fa fa-truck"></i></div>
+              <h4 class="info-box-heading green">300ming so'mdan ortiq buyurtmalar uchun bepul yetkazib berish</h4>
+            </div>
+
+
+
+            <!-- .col -->
+
+            <div class="header-benefit">
+              <div class="benefit-icon"><i class="fa fa-certificate"></i></div>
+              <h4 class="info-box-heading green">Tanlangan mahsulotlarga qo‘shimcha 50mingdan chegirma</h4>
+            </div>
+
+            <!-- .col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.info-boxes-inner -->
+
+      </div>
+      <!-- /.info-boxes -->
+      <!-- ============================================== INFO BOXES : END ============================================== -->
+      <!-- ============================================== SCROLL TABS ============================================== -->
+      {% if new_products %}
+      <div id="product-tabs-slider" class="scroll-tabs outer-top-vs">
+        <div class="more-info-tab clearfix ">
+          <h3 class="new-product-title pull-left">Yangi Mahsulotlar</h3>
+          <!-- /.nav-tabs -->
+        </div>
+        <div class="tab-content outer-top-xs">
+          <div class="tab-pane in active" id="all">
+            <div class="product-slider">
+              <div class="owl-carousel home-owl-carousel custom-carousel owl-theme" data-item="4">
+                {% for product in new_products  %}
+                  <div class="item item-carousel">
+                    <div class="products">
+                      <div class="product">
+                        <div class="product-image">
+                          <div class="image"> <a href="{% url "main:product_detail" product_id=product.id %}"><img src="{{product.get_banner_image.image.url}}" style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 100%; object-fit: cover;" alt=""></a>
+                          </div>
+                          <!-- /.image -->
+                          {% if product.discount %}
+                          <div class="tag hot"><span>{{product.discount}}%</span></div>
+                          {% else %}
+                          <div class="tag new"><span>Yangi</span></div>
+                          {% endif %}
+                        </div>
+                        <!-- /.product-image -->
+
+                        <div class="product-info text-left">
+                          <h3 class="name"><a href="{% url "main:product_detail" product_id=product.id %}">{{product.name|slice:":25"}}{% if product.name|length > 25  %}...{% endif %}</a></h3>
+                          <ul class="stars">
+                            {% for i in "12345" %}
+                              {% if forloop.counter <= product.get_average_rating %}
+                                  <li><i class="fa-solid fa-star" style="color:gold;font-size: 13px;"></i></li> <!-- Yulduz -->
+                              {% else %}
+                                  <li><i class="fa-solid fa-star" style="color: grey;font-size: 13px;"></i></li> <!-- Bo'sh yulduz -->
+                              {% endif %}
+                            {% endfor %}
+                            <ul>
+                          <div class="description"></div>
+                          <div class="product-price"> <span class="price"> {{ product.get_discounted_price }} so'm </span> 
+                        {% if product.discount %}<span class="price-before-discount">{{ product.get_format_price }} so'm</span>{% endif %} </div>
+                          <!-- /.product-price -->
+                          {% for color in product.colors.all %}
+                            {% if not color.stock_quantity == 0 %}
+                                  <input type="hidden" name="color" class="myCheckbox{{product.id}}" value="{{color.id}}">
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                        <!-- /.product-info -->
+                        <div class="cart clearfix animate-effect" style="width: 100%;left: 58%;">
+                          <div class="action">
+                            <ul class="list-unstyled">
+                              <li class="add-cart-button btn-group">
+                                <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" data-toggle="tooltip" class="btn btn-primary icon" type="button" title="savatga">
+                                  <i class="fa fa-shopping-cart"></i> </button>
+                                <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" class="btn btn-primary cart-btn" type="button">Savatga</button>
+                              </li>
+                              <li class="lnk wishlist bg-primary" onclick="toggleWishlist(this);toggleFavorite({{product.id}})">
+                                <i class="icon fa fa-heart"></i>
+                              </li>
+
+                            </ul>
+                          </div>
+                          <!-- /.action -->
+                        </div>
+                        <!-- /.cart -->
+                      </div>
+                      <!-- /.product -->
+
+                    </div>
+                    <!-- /.products -->
+                  </div>
+                  <!-- /.item -->
+                {% endfor %}
+              </div>
+              <!-- /.home-owl-carousel -->
+            </div>
+            <!-- /.product-slider -->
+          </div>
+          <!-- /.tab-pane -->
+
+        </div>
+        <!-- /.tab-content -->
+      </div>
+      {% endif %}
+
+      <!-- ============================================== WIDE PRODUCTS : END ============================================== -->
+
+      <!-- ============================================== FEATURED PRODUCTS ============================================== -->
+      {% if random_products %}
+      <section class="section featured-product wow fadeInUp">
+        <div class="section-title">
+          <h3>Tavsiya etamiz</h3>
+        </div>
+        <div class="featured-block">
+          <div class="owl-carousel home-owl-carousel custom-carousel owl-theme outer-top-xs">
+            {% for product in random_products  %}
+                  <div class="item item-carousel">
+                    <div class="products">
+                      <div class="product">
+                        <div class="product-image">
+                          <div class="image"> <a href="{% url "main:product_detail" product_id=product.id %}"><img src="{{product.get_banner_image.image.url}}" style="opacity: 1 !important;aspect-ratio: 1 / 1; width: 100%; object-fit: cover;" alt=""></a>
+                          </div>
+                          <!-- /.image -->
+                          {% if product.discount %}
+                          <div class="tag hot"><span>{{product.discount}}%</span></div>
+                          {% else %}
+                          <div class="tag new"><span>Yangi</span></div>
+                          {% endif %}
+                        </div>
+                        <!-- /.product-image -->
+
+                        <div class="product-info text-left">
+                          <h3 class="name"><a href="{% url "main:product_detail" product_id=product.id %}">{{product.name|slice:":25"}}{% if product.name|length > 25  %}...{% endif %}</a></h3>
+                          <ul class="stars">
+                            {% for i in "12345" %}
+                              {% if forloop.counter <= product.get_average_rating %}
+                                  <li><i class="fa-solid fa-star" style="color:gold;font-size: 13px;"></i></li> <!-- Yulduz -->
+                              {% else %}
+                                  <li><i class="fa-solid fa-star" style="color: grey;font-size: 13px;"></i></li> <!-- Bo'sh yulduz -->
+                              {% endif %}
+                            {% endfor %}
+                            <ul>
+                          <div class="description"></div>
+                          <div class="product-price"> <span class="price"> {{ product.get_discounted_price }} so'm </span> 
+                        {% if product.discount %}<span class="price-before-discount">{{ product.get_format_price }} so'm</span>{% endif %} </div>
+                          <!-- /.product-price -->
+                          {% for color in product.colors.all %}
+                            {% if not color.stock_quantity == 0 %}
+                                  <input type="hidden" name="color" class="myCheckbox{{product.id}}" value="{{color.id}}">
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                        <!-- /.product-info -->
+                        <div class="cart clearfix animate-effect" style="width: 100%;left: 58%;">
+                          <div class="action">
+                            <ul class="list-unstyled">
+                              <li class="add-cart-button btn-group">
+                                <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" data-toggle="tooltip" class="btn btn-primary icon" type="button" title="savatga">
+                                  <i class="fa fa-shopping-cart"></i> </button>
+                                <button onclick="addToCartHome(this)" data-product-id="{{product.id}}" class="btn btn-primary cart-btn" type="button">Savatga</button>
+                              </li>
+                              <li class="lnk wishlist bg-primary" onclick="toggleWishlist(this);toggleFavorite({{product.id}})">
+                                <i class="icon fa fa-heart"></i>
+                              </li>
+
+                            </ul>
+                          </div>
+                          <!-- /.action -->
+                        </div>
+                        <!-- /.cart -->
+                      </div>
+                      <!-- /.product -->
+
+                    </div>
+                    <!-- /.products -->
+                  </div>
+                  <!-- /.item -->
+                {% endfor %}
+            <!-- /.item -->
+          </div>
+        </div>
+        <!-- /.home-owl-carousel -->
+      </section>
+      {% endif %}
+      <!-- /.section -->
+      <!-- ============================================== FEATURED PRODUCTS : END ============================================== -->
+
+      <div class="row">
+
+      </div>
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /#top-banner-and-menu -->
+{% endblock content %}
+
+{% block js %}
+<script>
+  function getSeason() {
+    const today = new Date();
+    const month = today.getMonth() + 1; // Oylar 0 dan boshlanadi, shuning uchun +1 qilamiz
+    let season = "";
+    let backgroundUrl = "";
+
+    if (month >= 3 && month <= 5) {
+      season = "Bahor";
+      backgroundUrl = "{% static "images/springimgs.jpg" %}"; // Bahor rasmi
+    } else if (month >= 6 && month <= 8) {
+      season = "Yoz";
+      backgroundUrl = "{% static "images/summertoysimg.jpg" %}"; // Yoz rasmi
+    } else if (month >= 9 && month <= 11) {
+      season = "Kuz";
+      backgroundUrl = "{% static "images/automimgs.jpg" %}"; // Kuz rasmi
+    } else {
+      season = "Qish";
+      backgroundUrl = "{% static "images/wintertoysimg.jpg" %}"; // Qish rasmi
+    }
+    console.log(backgroundUrl)
+    // Fasl va rasm URL qaytarish
+    return { season, backgroundUrl };
+  }
+
+  // Fasl va fon rasmini ekranga chiqarish
+  const seasonData = getSeason();
+  document.getElementById('season').textContent = seasonData.season;
+  const seasonContainer = document.getElementById('season-container');
+  seasonContainer.style.backgroundImage = `url('${seasonData.backgroundUrl}')`;
+</script>
+{% endblock js %}
