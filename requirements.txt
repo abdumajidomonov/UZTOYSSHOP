@@ -1,0 +1,11 @@
+aiogram==2.15
+aiohappyeyeballs==2.4.4
+django-ckeditor==6.7.1
+django-js-asset==2.2.0
+djangorestframework==3.15.2
+environs==11.2.1
+PaycomUz==3.1
+pillow==11.0.0
+python-barcode==0.15.1
+python-dotenv==1.0.1
+requests==2.32.3

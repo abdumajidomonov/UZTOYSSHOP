@@ -139,7 +139,7 @@ def product_list(request):
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
     banner = Banner.objects.all().order_by('?').first()
-    high_price = products.object_list.aggregate(Max('final_price'))['final_price__max']
+    high_price = Product.objects.all().aggregate(Max('final_price'))['final_price__max']
 
     context = {
         'products': products,

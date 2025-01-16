@@ -288,7 +288,7 @@
                                 <ul>
                               <div class="description"></div>
                               <div class="product-price"> <span class="price"> {{ product.get_discounted_price }} so'm </span> 
-                            {% if product.discount %}<span class="price-before-discount">{{ product.get_format_price }} so'm</span>{% endif %} </div>
+                            <span class="price-before-discount">{% if product.discount %}{{ product.get_format_price }} so'm{% endif %} </span></div>
                               <!-- /.product-price -->
                               {% for color in product.colors.all %}
                                 {% if not color.stock_quantity == 0 %}
@@ -319,6 +319,7 @@
                         </div>
                         <!-- /.products -->
                     </div>
+                    
                     {% endfor %}
 
 
